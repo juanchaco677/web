@@ -1,0 +1,23 @@
+
+.parent{
+	-fx-background-color:#fff;
+	
+}
+
+.sidebar{
+	-fx-background-color:#333645;
+}
+
+.btns{
+        -fx-background-color:transparent;
+}
+
+.btns:hover{
+        -fx-background-color:#202332;
+}
+
+.user-imge{
+    -fx-background-color: white;
+    -fx-background-radius: 200;
+    -fx-padding: 10;
+}

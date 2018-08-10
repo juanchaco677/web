@@ -1,0 +1,23 @@
+@CHARSET "UTF-8";
+.parent{
+	-fx-background-color:#fff;
+	
+}
+
+.sidebar{
+	-fx-background-color:#333645;
+}
+
+.btns{
+        -fx-background-color:tranparent;
+}
+
+.btns:hover{
+        -fx-background-color:#202332;
+}
+
+.user-imge{
+    -fx-background-color: white;
+    -fx-background-radius: 200px 200px 200px 200px;
+    -fx-padding: 10;
+}
