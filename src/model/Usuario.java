@@ -1,6 +1,13 @@
 package model;
 
-public class Usuario {
+public class Usuario {	
+
+	private int id;
+	
+	private String correo;
+	
+	private String contrasena;
+	
 	private String nombreUno;
 
 	private String nombreDos;
@@ -10,16 +17,23 @@ public class Usuario {
 	private String apellidoDos;
 
 	private String celular;
+	
+	private Mesa mesa;	
 
-
-	public Usuario(String nombreUno, String nombreDos, String apellidoUno, String apellidoDos, String celular) {
+	public Usuario(int id, String correo, String contrasena, String nombreUno, String nombreDos, String apellidoUno,
+			String apellidoDos, String celular, Mesa mesa) {
 		super();
+		this.id = id;
+		this.correo = correo;
+		this.contrasena = contrasena;
 		this.nombreUno = nombreUno;
 		this.nombreDos = nombreDos;
 		this.apellidoUno = apellidoUno;
 		this.apellidoDos = apellidoDos;
 		this.celular = celular;
+		this.mesa = mesa;
 	}
+
 	public Usuario(String nombreCompleto, String celular) {
 		
 		String [] arrayNombre=nombreCompleto.split(" ");		
@@ -81,6 +95,36 @@ public class Usuario {
 		this.apellidoDos = apellidoDos;
 	}
 	
-	
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public String getCorreo() {
+		return correo;
+	}
+
+	public void setCorreo(String correo) {
+		this.correo = correo;
+	}
+
+	public String getContrasena() {
+		return contrasena;
+	}
+
+	public void setContrasena(String contrasena) {
+		this.contrasena = contrasena;
+	}
+
+	public Mesa getMesa() {
+		return mesa;
+	}
+
+	public void setMesa(Mesa mesa) {
+		this.mesa = mesa;
+	}
 	
 }
