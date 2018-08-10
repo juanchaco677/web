@@ -7,7 +7,14 @@ package main;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URL;
+
+import org.json.JSONObject;
+
+import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXPasswordField;
+import com.jfoenix.controls.JFXTextField;
 
 import javafx.application.Application;
 import javafx.event.Event;
@@ -17,8 +24,12 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
+import model.Usuario;
+import service.UsuarioService;
 
 /**
  *
@@ -33,6 +44,25 @@ public class VentanaFX extends Application  {
 	private HBox hBoxRegistradura;
 	@FXML
 	private HBox hBoxPersona;
+	@FXML
+	private HBox hBoxCuerpo;
+	@FXML
+	private Pane dialogo;	
+	@FXML
+	private Pane dashboard;	
+	@FXML
+	private VBox login;
+	@FXML
+	private JFXTextField correo;
+	@FXML
+	private JFXPasswordField contrasena;
+
+	@FXML
+	private JFXButton btnIngresar;
+
+
+	private Usuario authUser;
+	
 	public VentanaFX(){
 
 	}
@@ -60,23 +90,49 @@ public class VentanaFX extends Application  {
 		Scene scene = new Scene(root);
 
 		stage.setScene(scene);
-		stage.setTitle("DASHBOARD");
-//		stage.setFullScreen(true);
-		stage.setMaximized(true);
+		stage.setTitle("Software Valerian");
 		stage.show();
-	
+
+		//objetos campos dashboard
 		hBoxContainer=(HBox)root.lookup("#container");
 		hBoxRegistradura=(HBox)root.lookup("#registraduria");
 		hBoxPersona=(HBox)root.lookup("#persona");
+		hBoxCuerpo=(HBox)root.lookup("#cuerpo");
+		dialogo=(Pane)root.lookup("#dialogo");
+		//objetos campos de login
+		correo=(JFXTextField)root.lookup("#correo");
+		contrasena=(JFXPasswordField) root.lookup("#contrasena");
+		btnIngresar=(JFXButton) root.lookup("#btnIngresar");
+		login=(VBox)root.lookup("#login");
+		dashboard=(Pane)root.lookup("#dashboard");
 
-		hBoxContainer.setPrefWidth(stage.getWidth()-145);
-		
+		btnIngresar.setOnMouseClicked(new EventHandler() {
+
+			@Override
+			public void handle(Event arg0) {
+				UsuarioService usuarioService=new UsuarioService();
+				try {
+					Registro registro=usuarioService.sesion(new Usuario(correo.getText().toString(),contrasena.getText().toString()));
+					if(registro!=null && (boolean)registro.getCampos().get("success")) {
+						JSONObject json=new JSONObject(registro.getCampos().get("usuario"));
+						authUser=new Usuario(json);
+					}
+				} catch (URISyntaxException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			
+			}
+		});
 		hBoxRegistradura.setOnMouseClicked(new EventHandler() {
 
 			@Override
 			public void handle(Event arg0) {
 				// TODO Auto-generated method stub
-				hBoxContainer.setVisible(true);
+//				hBoxContainer.setVisible(true);
+				hBoxCuerpo.setVisible(true);
+//				dialogo.setVisible(true);
+				hBoxCuerpo.toFront();
 			}
 		});
 
@@ -86,6 +142,8 @@ public class VentanaFX extends Application  {
 			public void handle(Event arg0) {
 				// TODO Auto-generated method stub
 				hBoxContainer.setVisible(false);
+				dialogo.setVisible(false);
+				hBoxCuerpo.setVisible(false);
 			}
 		});
 
