@@ -1,13 +1,18 @@
 package model;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import main.Registro;
+
 public class Usuario {	
 
 	private int id;
-	
+
 	private String correo;
-	
+
 	private String contrasena;
-	
+
 	private String nombreUno;
 
 	private String nombreDos;
@@ -17,8 +22,14 @@ public class Usuario {
 	private String apellidoDos;
 
 	private String celular;
-	
+
 	private Mesa mesa;	
+
+	private Character type;
+
+	private Usuario candidato;
+
+	private Usuario referido;
 
 	public Usuario(int id, String correo, String contrasena, String nombreUno, String nombreDos, String apellidoUno,
 			String apellidoDos, String celular, Mesa mesa) {
@@ -34,8 +45,17 @@ public class Usuario {
 		this.mesa = mesa;
 	}
 
-	public Usuario(String nombreCompleto, String celular) {
-		
+
+
+	public Usuario(int id) {
+		super();
+		this.id = id;
+	}
+
+
+
+	public Usuario(int id,String nombreCompleto, String celular) {
+
 		String [] arrayNombre=nombreCompleto.split(" ");		
 		this.nombreUno = recursivo(arrayNombre, 0);
 		this.nombreDos = recursivo(arrayNombre, 1);
@@ -43,18 +63,50 @@ public class Usuario {
 		this.apellidoDos = recursivo(arrayNombre, 3);
 		this.celular = celular;
 	}
-	
+
+	public Usuario(JSONObject json){
+		Registro registro=new Registro();
+		for (int j = 0; j < json.length(); j++) {					
+			try {
+				registro.add(json.names().getString(j),json.get(json.names().getString(j)));
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}					
+		}
+		if(registro!=null && registro.getCampos()!=null) {
+			this.id=Integer.parseInt(registro.getCampos().get("id").toString());
+			this.nombreUno=registro.getCampos().get("name").toString();
+			this.nombreDos=registro.getCampos().get("name2").toString();
+			this.apellidoUno=registro.getCampos().get("lastname").toString();
+			this.apellidoDos=registro.getCampos().get("lastname2").toString();
+			this.type=registro.getCampos().get("type").toString().charAt(0);
+			this.correo=registro.getCampos().get("email").toString();		
+			this.mesa=new Mesa(Integer.parseInt(registro.getCampos().get("id_mesa").toString()));
+			this.candidato=new Usuario(Integer.parseInt(registro.getCampos().get("id_candidato").toString()));
+			this.referido=new Usuario(Integer.parseInt(registro.getCampos().get("id_referido").toString()));
+		}
+
+	}
+
+
+
+	public Usuario(String correo, String contrasena) {
+		super();
+		this.correo = correo;
+		this.contrasena = contrasena;
+	}
+
 	private String recursivo(String [] arrayNombre,int i){
-		
+
 		if(!"".equals(arrayNombre[i]) && arrayNombre[i]!=null){
 			return arrayNombre[i];
 		}else if(arrayNombre.length-1==i && ("".equals(arrayNombre[i]) || arrayNombre[i]==null)){
 			return "";
 		}		
-		
+
 		return recursivo(arrayNombre,i+1);
 	}
-	
+
 	public String getCelular() {
 		return celular;
 	}
@@ -94,7 +146,7 @@ public class Usuario {
 	public void setApellidoDos(String apellidoDos) {
 		this.apellidoDos = apellidoDos;
 	}
-	
+
 	public int getId() {
 		return id;
 	}
@@ -126,5 +178,43 @@ public class Usuario {
 	public void setMesa(Mesa mesa) {
 		this.mesa = mesa;
 	}
+
+
+
+	public Character getType() {
+		return type;
+	}
+
+
+
+	public void setType(Character type) {
+		this.type = type;
+	}
+
+
+
+	public Usuario getCandidato() {
+		return candidato;
+	}
+
+
+
+	public void setCandidato(Usuario candidato) {
+		this.candidato = candidato;
+	}
+
+
+
+	public Usuario getReferido() {
+		return referido;
+	}
+
+
+
+	public void setReferido(Usuario referido) {
+		this.referido = referido;
+	}
 	
+	
+
 }

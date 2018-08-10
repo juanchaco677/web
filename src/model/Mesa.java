@@ -18,6 +18,14 @@ public class Mesa {
 		this.created_at = created_at;
 		this.updated_at = updated_at;
 	}
+	
+	
+	public Mesa(int id) {
+		super();
+		this.id = id;
+	}
+
+
 	public int getId() {
 		return id;
 	}
