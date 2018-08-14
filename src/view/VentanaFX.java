@@ -199,8 +199,8 @@ public class VentanaFX extends Application  {
 		registro.getCampos().put("mesa",document.getElementsByTagName("td").item(5).getTextContent());
 		String [] localizacion=document.getElementsByTagName("td").item(7).getTextContent().split(",");
 		if(localizacion != null && !localizacion.length > 0){
-		    registro.getCampos().put("localizacion",localizacion[4].split("&p=")[1]);	
-		    registro.getCampos().put("localizacion",localizacion[5]);
+		    registro.getCampos().put("localizacion",localizacion[0].split("&p=")[1]);	
+		    registro.getCampos().put("localizacion",localizacion[1]);
 		}
 		return registro;
 	}
