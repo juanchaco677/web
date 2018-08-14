@@ -17,7 +17,16 @@ public class PuntoVotacion {
 		this.localizacion = localizacion;
 		this.created_at = created_at;
 		this.updated_at = updated_at;
+	}	
+	
+	public PuntoVotacion(String nombre, Localizacion localizacion) {
+		super();
+	
+		this.nombre = nombre;
+		this.localizacion = localizacion;
 	}
+
+
 	public int getId() {
 		return id;
 	}

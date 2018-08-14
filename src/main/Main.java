@@ -5,6 +5,11 @@
  */
 package main;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import view.VentanaFX;
+
 /**
  *
  * @author camilo
@@ -17,11 +22,8 @@ public class Main {
     public static void main(String[] args) {
         // TODO code application logic here
         
-        VentanaFX ventanaFX=new VentanaFX();
-   
-         ventanaFX.launch(VentanaFX.class, args);
-         
-
+        VentanaFX ventanaFX=new VentanaFX();   
+        ventanaFX.launch(VentanaFX.class, args);	
      
     }
     

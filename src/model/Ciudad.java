@@ -19,6 +19,14 @@ public class Ciudad {
 		this.updated_at = updated_at;
 	}
 
+
+	public Ciudad(String nombre, Departamento departamento) {
+		super();
+		this.nombre = nombre;
+		this.departamento = departamento;
+	}
+
+
 	public Date getCreated_at() {
 		return created_at;
 	}

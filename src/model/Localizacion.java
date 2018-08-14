@@ -23,6 +23,18 @@ public class Localizacion {
 		this.updated_at = updated_at;
 	}
 	
+	
+	
+	public Localizacion(Double latitud, Double longitud, String direccion, Ciudad ciudad) {
+		super();
+		this.latitud = latitud;
+		this.longitud = longitud;
+		this.direccion = direccion;
+		this.ciudad = ciudad;
+	}
+
+
+
 	public int getId() {
 		return id;
 	}

@@ -3,7 +3,8 @@ package model;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import main.Registro;
+import util.Registro;
+import util.ValerianUtil;
 
 public class Usuario {	
 
@@ -25,7 +26,7 @@ public class Usuario {
 
 	private Mesa mesa;	
 
-	private Character type;
+	private String type;
 
 	private Usuario candidato;
 
@@ -44,6 +45,9 @@ public class Usuario {
 		this.celular = celular;
 		this.mesa = mesa;
 	}
+	
+	
+	
 
 
 
@@ -54,7 +58,7 @@ public class Usuario {
 
 
 
-	public Usuario(int id,String nombreCompleto, String celular) {
+	public Usuario(String nombreCompleto, String celular,Mesa mesa) {
 
 		String [] arrayNombre=nombreCompleto.split(" ");		
 		this.nombreUno = recursivo(arrayNombre, 0);
@@ -62,31 +66,25 @@ public class Usuario {
 		this.apellidoUno = recursivo(arrayNombre, 2);
 		this.apellidoDos = recursivo(arrayNombre, 3);
 		this.celular = celular;
+		this.mesa=mesa;
 	}
 
-	public Usuario(JSONObject json){
-		Registro registro=new Registro();
-		for (int j = 0; j < json.length(); j++) {					
-			try {
-				registro.add(json.names().getString(j),json.get(json.names().getString(j)));
-			} catch (JSONException e) {
-				e.printStackTrace();
-			}					
-		}
-		if(registro!=null && registro.getCampos()!=null) {
-			this.id=Integer.parseInt(registro.getCampos().get("id").toString());
-			this.nombreUno=registro.getCampos().get("name").toString();
-			this.nombreDos=registro.getCampos().get("name2").toString();
-			this.apellidoUno=registro.getCampos().get("lastname").toString();
-			this.apellidoDos=registro.getCampos().get("lastname2").toString();
-			this.type=registro.getCampos().get("type").toString().charAt(0);
-			this.correo=registro.getCampos().get("email").toString();		
-			this.mesa=new Mesa(Integer.parseInt(registro.getCampos().get("id_mesa").toString()));
-			this.candidato=new Usuario(Integer.parseInt(registro.getCampos().get("id_candidato").toString()));
-			this.referido=new Usuario(Integer.parseInt(registro.getCampos().get("id_referido").toString()));
-		}
+	public Usuario(Registro registro){
 
+			this.id=ValerianUtil.validarRegistro(registro, "id")?0:Integer.parseInt(ValerianUtil.valor(registro, "id").toString());
+			this.nombreUno=ValerianUtil.valor(registro, "name").toString();
+			this.nombreDos=ValerianUtil.valor(registro, "name").toString();
+			this.apellidoUno=ValerianUtil.valor(registro, "lastname").toString();
+			this.apellidoDos=ValerianUtil.valor(registro, "lastname2").toString();
+			this.type=ValerianUtil.valor(registro, "type").toString();
+			this.correo=ValerianUtil.valor(registro, "email").toString();		
+			this.mesa=new Mesa(ValerianUtil.validarRegistro(registro, "id_mesa")?0:Integer.parseInt(ValerianUtil.valor(registro, "id_mesa").toString()));
+			this.candidato=new Usuario(ValerianUtil.validarRegistro(registro, "id_candidato")?0:Integer.parseInt(ValerianUtil.valor(registro, "id_candidato").toString()));
+			this.referido=new Usuario(ValerianUtil.validarRegistro(registro, "id_referido")?0:Integer.parseInt(ValerianUtil.valor(registro, "id_candidato").toString()));
+			
+	
 	}
+	
 
 
 
@@ -179,42 +177,28 @@ public class Usuario {
 		this.mesa = mesa;
 	}
 
-
-
-	public Character getType() {
+	public String getType() {
 		return type;
 	}
 
-
-
-	public void setType(Character type) {
+	public void setType(String type) {
 		this.type = type;
 	}
-
-
 
 	public Usuario getCandidato() {
 		return candidato;
 	}
 
-
-
 	public void setCandidato(Usuario candidato) {
 		this.candidato = candidato;
 	}
-
-
 
 	public Usuario getReferido() {
 		return referido;
 	}
 
-
-
 	public void setReferido(Usuario referido) {
 		this.referido = referido;
-	}
-	
-	
+	}	
 
 }

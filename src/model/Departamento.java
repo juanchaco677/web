@@ -15,6 +15,12 @@ public class Departamento {
 		this.created_at = created_at;
 		this.updated_at = updated_at;
 	}
+	
+	
+	public Departamento(String nombre) {
+		super();
+		this.nombre = nombre;
+	}
 
 	public Date getCreated_at() {
 		return created_at;

@@ -1,4 +1,4 @@
-package main;
+package util;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -56,7 +56,7 @@ public class Request {
 				HttpEntity entity = response.getEntity();
 				try {
 					String content = EntityUtils.toString(entity);	
-			
+
 					JsonParser parser = new JsonParser();
 					JsonElement arrayElement = parser.parse(content.replace("{\"Entries\":{\"Entry\":", "").replace("}}",""));
 
@@ -98,18 +98,13 @@ public class Request {
 			HttpGet method = new HttpGet(uri.build());
 			method.setHeader("Accept","application/json");
 
-		
+
 			try {
 				HttpResponse response = httpClient.execute(method);
 				HttpEntity entity = response.getEntity();
 				try {
-					String content = EntityUtils.toString(entity);	
-					System.out.println(content);
-					JsonParser parser = new JsonParser();
-					JsonElement arrayElement = parser.parse(content.replace("{\"Entries\":{\"Entry\":", "").replace("}}",""));
-
-
-					JSONObject json=new JSONObject(arrayElement.getAsJsonArray().get(0).toString());
+					String content = EntityUtils.toString(entity);					
+					JSONObject json=new JSONObject(content);				
 					Registro registro=new Registro();
 					for (int j = 0; j < json.length(); j++) {					
 						registro.add(json.names().getString(j),json.get(json.names().getString(j)));					
@@ -125,6 +120,45 @@ public class Request {
 		} catch (URISyntaxException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
+		}
+
+		return null;
+	}
+
+	public static  Registro post(String url,Map<String, Object>parametros) throws URISyntaxException{
+		HttpClient httpClient = new DefaultHttpClient();
+		HttpPost httpPost = new HttpPost(url);
+		httpPost.setHeader(HttpHeaders.ACCEPT,"application/json");
+
+		List<NameValuePair> params = new ArrayList<NameValuePair>();
+		if(parametros!=null) {
+			for (Entry<String, Object> entry : parametros.entrySet()) {
+				params.add(new BasicNameValuePair(entry.getKey(), entry.getValue().toString()));
+			}
+		}
+		try {
+			httpPost.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
+		} catch (UnsupportedEncodingException e) {
+			// writing error to Log
+			e.printStackTrace();
+		}
+		try {
+			HttpResponse response = httpClient.execute(httpPost);
+			HttpEntity entity = response.getEntity();
+			try {
+				String content = EntityUtils.toString(entity);				
+				JSONObject json=new JSONObject(content);	
+				Registro registro=new Registro();
+				for (int j = 0; j < json.length(); j++) {	
+						registro.add(json.names().getString(j),json.get(json.names().getString(j)));					
+				}
+				return registro;
+
+			} catch (Exception e) {
+				System.out.println("error");
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 
 		return null;

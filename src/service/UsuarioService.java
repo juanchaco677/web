@@ -3,9 +3,10 @@ package service;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
-import main.Registro;
-import main.Request;
+
 import model.Usuario;
+import util.Registro;
+import util.Request;
 
 
 public class UsuarioService {
@@ -22,14 +23,21 @@ public class UsuarioService {
 		parametros.put("passsword", usuario.getContrasena());
 		parametros.put("mesa", usuario.getMesa().getId());	
 
-		return Request.get("http://softwarevalerian.tk/api/usuario/crear", parametros);
+		return Request.get("http://localhost:8000/api/usuario/storeJX", parametros);
 	}
 
 	public Registro sesion(Usuario usuario) throws URISyntaxException{
 		Map<String,Object>parametros=new HashMap<>();				
 		parametros.put("email", usuario.getCorreo());
-		parametros.put("passsword", usuario.getContrasena());	
+		parametros.put("password", usuario.getContrasena());	
 
-		return Request.get("http://softwarevalerian.tk/api/usuario/sesion", parametros);
+		return Request.post("http://localhost:8000/api/usuario/sesion", parametros);
+	}
+	
+
+	public Registro getUsuario(String token) throws URISyntaxException{
+		Map<String,Object>parametros=new HashMap<>();				
+		parametros.put("token", token);
+		return Request.get("http://localhost:8000/api/usuario/getUsuario", parametros);
 	}
 }

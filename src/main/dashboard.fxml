@@ -11,7 +11,7 @@
 
 <Pane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="810.0" prefWidth="1298.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <Pane fx:id="dashboard" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="810.0" prefWidth="1310.0" visible="false">
+      <Pane fx:id="dashboard" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="810.0" prefWidth="1310.0">
          <children>
             <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="810.0" prefWidth="1310.0" stylesheets="@../css/principal.css">
                <children>
@@ -95,17 +95,17 @@
                         <WebView fx:id="web" prefHeight="400.0" prefWidth="801.0" />
                         <VBox alignment="CENTER" prefHeight="800.0" prefWidth="197.0">
                            <children>
-                              <JFXTextField fx:id="nombreCompleto" prefHeight="37.0" prefWidth="197.0">
+                              <JFXTextField fx:id="nombreCompleto" prefHeight="37.0" prefWidth="197.0" promptText="Nombre Completo">
                                  <VBox.margin>
                                     <Insets bottom="15.0" />
                                  </VBox.margin>
                               </JFXTextField>
-                              <JFXTextField fx:id="celular" prefHeight="37.0" prefWidth="197.0">
+                              <JFXTextField fx:id="celular" prefHeight="37.0" prefWidth="197.0" promptText="Celular">
                                  <VBox.margin>
                                     <Insets bottom="15.0" />
                                  </VBox.margin>
                               </JFXTextField>
-                              <JFXButton fx:id="btnGuardar" prefHeight="43.0" prefWidth="197.0" style="-fx-background-color: #3f51b5;" text="Guardar" textFill="WHITE">
+                              <JFXButton fx:id="btnGRegistraduriaIndividual" prefHeight="43.0" prefWidth="197.0" style="-fx-background-color: #3f51b5;" text="Guardar" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -142,7 +142,7 @@
             </Pane>
          </children>
       </Pane>
-      <VBox fx:id="login" alignment="CENTER" layoutX="-2.0" layoutY="1.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="810.0" prefWidth="1304.0">
+      <VBox fx:id="login" alignment="CENTER" layoutX="-2.0" layoutY="1.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="810.0" prefWidth="1304.0" visible="false">
          <children>
             <JFXTextField fx:id="correo" prefHeight="35.0" prefWidth="600.0" promptText="Correo Electrónico">
                <VBox.margin>

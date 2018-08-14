@@ -20,6 +20,15 @@ public class Mesa {
 	}
 	
 	
+	
+	public Mesa(int numero, PuntoVotacion puntoVotacion) {
+		super();
+		this.numero = numero;
+		this.puntoVotacion = puntoVotacion;
+	}
+
+
+
 	public Mesa(int id) {
 		super();
 		this.id = id;

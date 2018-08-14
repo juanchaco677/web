@@ -3,14 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package main;
+package view;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 
-import org.json.JSONObject;
+import org.omg.CosNaming.NamingContextExtPackage.StringNameHelper;
+import org.w3c.dom.Document;
 
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXPasswordField;
@@ -28,8 +29,14 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
+import model.Ciudad;
+import model.Departamento;
+import model.Localizacion;
+import model.Mesa;
+import model.PuntoVotacion;
 import model.Usuario;
 import service.UsuarioService;
+import util.Registro;
 
 /**
  *
@@ -56,13 +63,18 @@ public class VentanaFX extends Application  {
 	private JFXTextField correo;
 	@FXML
 	private JFXPasswordField contrasena;
-
 	@FXML
-	private JFXButton btnIngresar;
-
+	private JFXButton btnIngresar;	
+	@FXML
+	private JFXButton btnGRegistraduriaIndividual;
+	private Registro registro;
 
 	private Usuario authUser;
-	
+	@FXML
+	private JFXTextField nombreCompleto;
+	@FXML
+	private JFXTextField celular;
+
 	public VentanaFX(){
 
 	}
@@ -102,7 +114,10 @@ public class VentanaFX extends Application  {
 		//objetos campos de login
 		correo=(JFXTextField)root.lookup("#correo");
 		contrasena=(JFXPasswordField) root.lookup("#contrasena");
+		nombreCompleto=(JFXTextField)root.lookup("#nombreCompleto");
+		celular=(JFXTextField)root.lookup("#celular");
 		btnIngresar=(JFXButton) root.lookup("#btnIngresar");
+		btnGRegistraduriaIndividual=(JFXButton) root.lookup("#btnGRegistraduriaIndividual");
 		login=(VBox)root.lookup("#login");
 		dashboard=(Pane)root.lookup("#dashboard");
 
@@ -113,26 +128,53 @@ public class VentanaFX extends Application  {
 				UsuarioService usuarioService=new UsuarioService();
 				try {
 					Registro registro=usuarioService.sesion(new Usuario(correo.getText().toString(),contrasena.getText().toString()));
-					if(registro!=null && (boolean)registro.getCampos().get("success")) {
-						JSONObject json=new JSONObject(registro.getCampos().get("usuario"));
-						authUser=new Usuario(json);
+					if(registro!=null) {
+						Registro registroUsuario=usuarioService.getUsuario(registro.getCampos().get("token").toString());
+						if(registroUsuario!=null){
+							authUser=new Usuario(registroUsuario);
+							login.setVisible(false);
+							dashboard.setVisible(true);
+						}
 					}
 				} catch (URISyntaxException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+
+			}
+		});
+
+		btnGRegistraduriaIndividual.setOnMouseClicked(new EventHandler() {
+
+			@Override
+			public void handle(Event arg0) {
+				registro=capturarDatosRegistraduria();
+
+				if(registro !=null && registro.getCampos() !=null){
+					UsuarioService usuarioService=new UsuarioService();
+					Departamento departamento=new Departamento(registro.getCampos().get("departamento").toString());
+					Ciudad ciudad=new Ciudad(registro.getCampos().get("ciudad").toString(),departamento);
+					Localizacion localizacion=new Localizacion(new Double(registro.getCampos().get("latitud").toString()),new Double(registro.getCampos().get("longitud").toString()), registro.getCampos().get("direccion").toString(), ciudad);
+					PuntoVotacion punto =new PuntoVotacion(registro.getCampos().get("puesto").toString(), localizacion);
+					Mesa mesa=new Mesa(Integer.parseInt(registro.getCampos().get("mesa").toString()), punto);
+					Usuario usuario=new Usuario(nombreCompleto.getText(), celular.getText(), mesa);
+					try {
+						usuarioService.crearUsuario(usuario);
+					} catch (URISyntaxException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					registro=null;
+				}
 			
 			}
 		});
+
 		hBoxRegistradura.setOnMouseClicked(new EventHandler() {
 
 			@Override
 			public void handle(Event arg0) {
-				// TODO Auto-generated method stub
-//				hBoxContainer.setVisible(true);
-				hBoxCuerpo.setVisible(true);
-//				dialogo.setVisible(true);
-				hBoxCuerpo.toFront();
+
 			}
 		});
 
@@ -140,13 +182,24 @@ public class VentanaFX extends Application  {
 
 			@Override
 			public void handle(Event arg0) {
-				// TODO Auto-generated method stub
-				hBoxContainer.setVisible(false);
-				dialogo.setVisible(false);
-				hBoxCuerpo.setVisible(false);
+
 			}
 		});
 
 	}
+
+	private Registro capturarDatosRegistraduria(){
+		Registro registro=new Registro();
+		Document document=webView.getEngine().getDocument();
+		registro.getCampos().put("cedula",document.getElementsByTagName("td").item(0).getTextContent());
+		registro.getCampos().put("departamento",document.getElementsByTagName("td").item(1).getTextContent());
+		registro.getCampos().put("ciudad",document.getElementsByTagName("td").item(2).getTextContent());
+		registro.getCampos().put("puesto",document.getElementsByTagName("td").item(3).getTextContent());
+		registro.getCampos().put("direccion",document.getElementsByTagName("td").item(4).getTextContent());
+		registro.getCampos().put("mesa",document.getElementsByTagName("td").item(5).getTextContent());	
+
+		return registro;
+	}
+
 
 }
