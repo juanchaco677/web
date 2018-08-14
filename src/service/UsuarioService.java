@@ -18,11 +18,13 @@ public class UsuarioService {
 		parametros.put("latitud", usuario.getMesa().getPuntoVotacion().getLocalizacion().getLatitud());
 		parametros.put("longitud", usuario.getMesa().getPuntoVotacion().getLocalizacion().getLongitud());
 		parametros.put("direccion", usuario.getMesa().getPuntoVotacion().getLocalizacion().getDireccion());
-		parametros.put("mesa", usuario.getMesa().getId());		
-		parametros.put("email", usuario.getCorreo());
-		parametros.put("passsword", usuario.getContrasena());
-		parametros.put("mesa", usuario.getMesa().getId());	
-
+		parametros.put("puesto", usuario.getMesa().getPuntoVotacion().getNombre());
+		parametros.put("mesa", usuario.getMesa().getNumero());		
+		parametros.put("movil", usuario.getCelular());
+		parametros.put("nombre", usuario.getNombreUno());
+		parametros.put("nombre2", usuario.getNombreDos());
+		parametros.put("apellido", usuario.getApellidoUno());
+		parametros.put("apellido2", usuario.getApellidoDos());
 		return Request.get("http://localhost:8000/api/usuario/storeJX", parametros);
 	}
 
