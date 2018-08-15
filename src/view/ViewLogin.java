@@ -10,6 +10,9 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
+import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import model.Usuario;
 import service.UsuarioService;
@@ -20,17 +23,24 @@ public class ViewLogin {
 	private ViewDashBoard viewDashBoard;
 	private Parent root;
 	@FXML
+	private Label testoMensaje;
+	@FXML
 	private VBox login;	
 	@FXML
 	private JFXTextField correo;
 	@FXML
 	private JFXPasswordField contrasena;
-
 	@FXML
+	private Pane dialogo;	
+	@FXML	
 	private JFXButton btnIngresar;	
+	@FXML
+	private HBox hBoxCuerpo;
 	
-	public ViewLogin(Parent root,ViewDashBoard viewDashBoard){
-		
+	public ViewLogin(Parent root,ViewDashBoard viewDashBoard,Pane dialogo,Label testoMensaje,HBox hBoxCuerpo){
+		this.hBoxCuerpo=hBoxCuerpo;
+		this.testoMensaje=testoMensaje;
+		this.dialogo=dialogo;
 		this.root=root;
 		this.viewDashBoard=viewDashBoard;
 		init();
@@ -46,18 +56,25 @@ public class ViewLogin {
 
 			@Override
 			public void handle(Event arg0) {
+				hBoxCuerpo.setVisible(true);
 				UsuarioService usuarioService=new UsuarioService();
 				try {
 					Registro registro=usuarioService.sesion(new Usuario(correo.getText().toString(),contrasena.getText().toString()));
 					if(registro!=null) {
 						Registro registroUsuario=usuarioService.getUsuario(registro.getCampos().get("token").toString());
+						hBoxCuerpo.setVisible(false);
+						dialogo.setVisible(true);
 						if(registroUsuario!=null){
 							authUser=new Usuario(registroUsuario);
 							authUser.setToken(registro.getCampos().get("token").toString());
 							login.setVisible(false);
 							viewDashBoard.getDashboard().setVisible(true);
-							viewDashBoard.setAuthUser(authUser);
+							viewDashBoard.setAuthUser(authUser);					
+							testoMensaje.setText("Las credenciales del usuario son correctas.");						
+						}else {							
+							testoMensaje.setText("Intente nuevamente ingresar las credenciales.");						
 						}
+						desaparecerDialogo(3000);
 					}
 				} catch (URISyntaxException e) {
 					// TODO Auto-generated catch block
@@ -66,6 +83,15 @@ public class ViewLogin {
 
 			}
 		});
+	}
+	private void desaparecerDialogo(int segundos) {
+		try {
+			Thread.sleep(segundos);
+			dialogo.setVisible(false);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	public Parent getRoot() {
 		return root;
