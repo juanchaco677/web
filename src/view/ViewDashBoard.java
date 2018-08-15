@@ -30,7 +30,7 @@ import service.UsuarioService;
 import util.Registro;
 import util.Request;
 
-public class ViewDashBoard extends Pane{
+public class ViewDashBoard extends Pane implements Runnable{
 	private Parent root;
 
 	@FXML
@@ -62,7 +62,10 @@ public class ViewDashBoard extends Pane{
 	private JFXButton btnGRegistraduriaIndividual;	
 	@FXML
 	private JFXButton btnIniciarMasivo;	
-	
+	@FXML
+	private JFXButton btnPararMasivo;	
+	private boolean masivoAutomatico;
+
 	private Usuario authUser;
 	private static final String URL="https://wsp.registraduria.gov.co/censo/consultar/";
 	public ViewDashBoard(Parent root,Pane dialogo,Label testoMensaje,HBox hBoxCuerpo){
@@ -87,7 +90,8 @@ public class ViewDashBoard extends Pane{
 		celular=(JFXTextField)root.lookup("#celular");
 		btnGRegistraduriaIndividual=(JFXButton) root.lookup("#btnGRegistraduriaIndividual");		
 		btnIniciarMasivo=(JFXButton) root.lookup("#btnIniciarMasivo");
-
+		btnPararMasivo=(JFXButton) root.lookup("#btnPararMasivo");
+		
 		webView=(WebView)root.lookup("#web");
 		if(webView != null){
 			webView.getEngine().load(URL);
@@ -100,9 +104,9 @@ public class ViewDashBoard extends Pane{
 			@Override
 			public void handle(Event arg0) {
 				hBoxCuerpo.setVisible(true);
-				registro=capturarDatosRegistraduria();
+				registro=capturarDatosRegistraduria("");
 				if(registro !=null && registro.getCampos() !=null){
-					UsuarioService usuarioService=new UsuarioService();
+
 					Departamento departamento=new Departamento(registro.getCampos().get("departamento").toString());
 					Ciudad ciudad=new Ciudad(registro.getCampos().get("ciudad").toString(),departamento);
 					Localizacion localizacion=new Localizacion(new Double(registro.getCampos().get("latitud").toString()),new Double(registro.getCampos().get("longitud").toString()), registro.getCampos().get("direccion").toString(), ciudad);
@@ -112,48 +116,28 @@ public class ViewDashBoard extends Pane{
 					usuario.setReferido(authUser !=null?authUser.getReferido():null);
 					usuario.setCandidato(authUser !=null?authUser.getCandidato():null);
 					usuario.setCedula(registro.getCampos().get("cedula").toString());
-					try {
-						Registro registro=usuarioService.crearUsuario(usuario,authUser!=null?authUser.getToken():"");
-						if(registro !=null && registro.getCampos()!=null){
-							String mensaje=registro.getCampos().get("data").toString();
-							hBoxCuerpo.setVisible(false);
-							dialogo.setVisible(true);
-							if(Boolean.valueOf(registro.getCampos().get("success").toString())){
-								hBoxCuerpo.setVisible(false);							
-								testoMensaje.setText(mensaje);
-								webView.getEngine().executeScript("document.getElementById(\"nuip\").value = \"\";");
-								registro=null;								
-							}else{							
-								testoMensaje.setText(mensaje);
-								registro=null;							
-							}
-							desaparecerDialogo(3000);
-						}
-					} catch (URISyntaxException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					registro=null;
+					enviarDatosRegistraduria(usuario);
 				}
-
 			}
 		});
-		
+
 		btnIniciarMasivo.setOnMouseClicked(new EventHandler() {
 
 			@Override
 			public void handle(Event arg0) {
-				UsuarioService usuarioService=new UsuarioService();
-				try {
-					List<Registro> listaUsuario=usuarioService.consultaMasivoPersona(10, authUser.getToken());
-				} catch (URISyntaxException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				masivoAutomatico=true;
 			}
-			
-		});
 
+		});
+		btnPararMasivo.setOnMouseClicked(new EventHandler() {
+
+			@Override
+			public void handle(Event arg0) {
+				masivoAutomatico=false;
+			}
+
+		});
+		
 		//cambio por menu
 		hBoxRegistradura.setOnMouseClicked(new EventHandler() {
 
@@ -173,6 +157,34 @@ public class ViewDashBoard extends Pane{
 			}
 		});
 	}
+
+	private void enviarDatosRegistraduria(Usuario usuario) {
+
+		UsuarioService usuarioService=new UsuarioService();
+		try {
+			Registro registro=usuarioService.crearUsuario(usuario,authUser!=null?authUser.getToken():"");
+			if(registro !=null && registro.getCampos()!=null){
+				String mensaje=registro.getCampos().get("data").toString();
+				hBoxCuerpo.setVisible(false);
+				dialogo.setVisible(true);
+				if(Boolean.valueOf(registro.getCampos().get("success").toString())){
+					hBoxCuerpo.setVisible(false);							
+					testoMensaje.setText(mensaje);
+					webView.getEngine().executeScript("document.getElementById(\"nuip\").value = \"\";");
+					registro=null;								
+				}else{							
+					testoMensaje.setText(mensaje);
+					registro=null;							
+				}
+				desaparecerDialogo(3000);
+			}
+		} catch (URISyntaxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		registro=null;
+
+	}
 	private void desaparecerDialogo(int segundos) {
 		try {
 			Thread.sleep(segundos);
@@ -184,11 +196,11 @@ public class ViewDashBoard extends Pane{
 	}
 
 
-	private Registro capturarDatosRegistraduria(){
+	private Registro capturarDatosRegistraduria(String cedula){
 		Registro registro=new Registro();
 		Document document=webView.getEngine().getDocument();
 		if(document.getElementsByTagName("td").getLength()>0){
-			registro.getCampos().put("cedula",document.getElementsByTagName("td").item(0).getTextContent());
+			registro.getCampos().put("cedula","".equals(cedula)?document.getElementsByTagName("td").item(0).getTextContent():cedula);
 			registro.getCampos().put("departamento",document.getElementsByTagName("td").item(1).getTextContent());
 			registro.getCampos().put("ciudad",document.getElementsByTagName("td").item(2).getTextContent());
 			registro.getCampos().put("puesto",document.getElementsByTagName("td").item(3).getTextContent());
@@ -316,6 +328,55 @@ public class ViewDashBoard extends Pane{
 	}
 	public void setRoot(Parent root) {
 		this.root = root;
+	}
+	/**
+	 * ejecuta la tarea programa de masivo
+	 */
+	private void tareaProgramadaMasivo() {
+		// TODO Auto-generated method stub
+		UsuarioService usuarioService=new UsuarioService();
+		try {
+			int idCandidato="S".equals(authUser.getType())?authUser.getId():authUser.getCandidato().getId();
+			List<Registro> listaUsuario=usuarioService.consultaMasivoPersona(10, authUser.getToken(),idCandidato);
+			hBoxCuerpo.setVisible(true);
+			for (Registro registroUsuario : listaUsuario) {					
+				registro=capturarDatosRegistraduria(registroUsuario.getCampos().get("nit").toString());
+				Departamento departamento=new Departamento(registro.getCampos().get("departamento").toString());
+				Ciudad ciudad=new Ciudad(registro.getCampos().get("ciudad").toString(),departamento);
+				Localizacion localizacion=new Localizacion(new Double(registro.getCampos().get("latitud").toString()),new Double(registro.getCampos().get("longitud").toString()), registro.getCampos().get("direccion").toString(), ciudad);
+				PuntoVotacion punto =new PuntoVotacion(registro.getCampos().get("puesto").toString(), localizacion);
+				Mesa mesa=new Mesa(Integer.parseInt(registro.getCampos().get("mesa").toString()), punto);
+				Usuario usuario=new Usuario(nombreCompleto.getText(), celular.getText(), mesa);
+				usuario.setReferido(authUser !=null?authUser.getReferido():null);
+				usuario.setCandidato(authUser !=null?authUser.getCandidato():null);
+				usuario.setCedula(registro.getCampos().get("cedula").toString());
+				enviarDatosRegistraduria(usuario);
+			}
+
+
+		} catch (URISyntaxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
+
+		while(true) {
+			if(masivoAutomatico) {
+
+				try {
+					tareaProgramadaMasivo();
+					Thread.sleep(1500);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+
 	}
 
 
