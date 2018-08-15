@@ -109,6 +109,7 @@ public class ViewDashBoard extends Pane{
 							if(Boolean.valueOf(registro.getCampos().get("success").toString())){
 								hBoxCuerpo.setVisible(false);							
 								testoMensaje.setText(mensaje);
+								webView.getEngine().executeScript("document.getElementById(\"nuip\").value = \"\";");
 								registro=null;								
 							}else{							
 								testoMensaje.setText(mensaje);
