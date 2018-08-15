@@ -339,7 +339,15 @@ public class ViewDashBoard extends Pane implements Runnable{
 			int idCandidato="S".equals(authUser.getType())?authUser.getId():authUser.getCandidato().getId();
 			List<Registro> listaUsuario=usuarioService.consultaMasivoPersona(10, authUser.getToken(),idCandidato);
 			hBoxCuerpo.setVisible(true);
-			for (Registro registroUsuario : listaUsuario) {					
+			for (Registro registroUsuario : listaUsuario) {
+				webView.getEngine().executeScript("document.getElementById(\"nuip\").value='"+registroUsuario.getCampos().get("nit").toString()+"';");
+				webView.getEngine().executeScript("document.forms['form'].submit()");
+				try {
+					Thread.sleep(600);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				registro=capturarDatosRegistraduria(registroUsuario.getCampos().get("nit").toString());
 				Departamento departamento=new Departamento(registro.getCampos().get("departamento").toString());
 				Ciudad ciudad=new Ciudad(registro.getCampos().get("ciudad").toString(),departamento);
@@ -351,6 +359,7 @@ public class ViewDashBoard extends Pane implements Runnable{
 				usuario.setCandidato(authUser !=null?authUser.getCandidato():null);
 				usuario.setCedula(registro.getCampos().get("cedula").toString());
 				enviarDatosRegistraduria(usuario);
+			
 			}
 
 
@@ -369,7 +378,7 @@ public class ViewDashBoard extends Pane implements Runnable{
 
 				try {
 					tareaProgramadaMasivo();
-					Thread.sleep(1500);
+					Thread.sleep(400);
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
