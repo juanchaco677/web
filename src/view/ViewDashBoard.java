@@ -163,13 +163,13 @@ public class ViewDashBoard extends Pane{
 			registro.getCampos().put("mesa",document.getElementsByTagName("td").item(5).getTextContent());
 			Element hrefA=null;
 			if(document.getElementsByTagName("td").item(7)!=null){
-				 hrefA=(Element)document.getElementsByTagName("td").item(7).getChildNodes().item(0);
-					String [] localizacion=hrefA.getAttribute("href").split(",");		
-					if(localizacion != null && localizacion.length > 0){
-						registro.getCampos().put("longitud",localizacion[4].split("&p=")[1]);	
-						registro.getCampos().put("latitud",localizacion[5]);
-						return registro;
-					}
+				hrefA=(Element)document.getElementsByTagName("td").item(7).getChildNodes().item(0);
+				String [] localizacion=hrefA.getAttribute("href").split(",");		
+				if(localizacion != null && localizacion.length > 0){
+					registro.getCampos().put("longitud",localizacion[4].split("&p=")[1]);	
+					registro.getCampos().put("latitud",localizacion[5]);
+					return registro;
+				}
 			}else{
 				try {
 					Map<String,Object>parametros=new HashMap<>();	
@@ -180,34 +180,29 @@ public class ViewDashBoard extends Pane{
 					parametros.put("address", address);
 					parametros.put("key", "AIzaSyAEYzgkz7vRYKNIINybhqWsxDUF2ZkUbNc");
 					Registro registroAux=Request.getGoogle("https://maps.googleapis.com/maps/api/geocode/json", parametros);
-					if(registroAux !=null && "OK".equals(registroAux.getCampos().get("status").toString())){
-						try {
-							JSONArray jsonArray=new JSONArray(registroAux.getCampos().get("results").toString());
-							for (int i = 0; i < jsonArray.length(); i++) {
-							    JSONObject json = jsonArray.getJSONObject(i);							 			
-								Registro registrof=new Registro();
-								for (int j = 0; j < json.length(); j++) {		
-									System.out.println(json.names().getString(j));
-									System.out.println(json.get(json.names().getString(j)));
-									System.out.println("------------");
-									registro.add(json.names().getString(j),json.get(json.names().getString(j)));					
-								}
-							}
-							System.out.println("OBJETO JSON");
-							System.out.println(jsonArray);
-						} catch (JSONException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
+					if(registroAux !=null && "OK".equals(registroAux.getCampos().get("status").toString())){						
+						String cadena=registroAux.getCampos().get("results").toString();
+						String resultado=encontrarCadena(cadena,"","");
+						registro.getCampos().put("direccion",resultado);
+						resultado=encontrarCadena(cadena,"","");
+						registro.getCampos().put("latitud",resultado);
+						resultado=encontrarCadena(cadena,"","");
+						registro.getCampos().put("longitud",resultado);
+
 					}
 				} catch (URISyntaxException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
-		
+
 		}
 		return null;	
+	}
+	private String encontrarCadena(String cadena,String cadenaInicial, String cadenaFinal) {		
+		int numInicial=cadena.indexOf(cadenaInicial)+cadenaInicial.length();
+		int numFinal=cadena.indexOf(cadenaFinal);		
+		return cadena.substring(numInicial,numFinal).trim();
 	}
 
 	public WebView getWebView() {
