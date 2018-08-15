@@ -1,4 +1,4 @@
-package util;
+package test;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -19,10 +19,8 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.utils.URIBuilder;
-import org.apache.http.conn.ssl.DefaultHostnameVerifier;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
@@ -53,7 +51,7 @@ public class Request {
 				HttpEntity entity = response.getEntity();
 				try {
 					String content = EntityUtils.toString(entity);	
-
+			
 					JsonParser parser = new JsonParser();
 					JsonElement arrayElement = parser.parse(content.replace("{\"Entries\":{\"Entry\":", "").replace("}}",""));
 
@@ -81,55 +79,6 @@ public class Request {
 
 		return null;
 	}
-	public static  Registro getGoogle(String url,Map<String, Object>parametros) throws URISyntaxException{
-		HttpClient httpClient = HttpClients.custom()
-		        .setSSLHostnameVerifier(new DefaultHostnameVerifier(null))
-		        .build();
-
-		URIBuilder uri = null;
-		try {
-			uri = new URIBuilder(url);
-			if(parametros!=null) {
-				for (Entry<String, Object> entry : parametros.entrySet()) {
-					uri.setParameter(entry.getKey(),  entry.getValue().toString());
-				}
-			}
-			HttpGet method = new HttpGet(uri.build());
-			method.setHeader("Accept","application/json");
-
-
-			try {
-				HttpResponse response = httpClient.execute(method);
-				HttpEntity entity = response.getEntity();
-				try {
-					String content = EntityUtils.toString(entity);	
-					System.out.println("CONTENIDO");
-					System.out.println(content);
-					JSONObject json=new JSONObject(content);
-					System.out.println("ENTRO"+
-					new JSONObject(json.get(json.names().getString(0))).get("ormatted_address").toString());
-					Registro registro=new Registro();
-					for (int j = 0; j < json.length(); j++) {		
-						System.out.println(json.names().getString(j));
-						System.out.println(json.get(json.names().getString(j)));
-						System.out.println("------------");
-						registro.add(json.names().getString(j),json.get(json.names().getString(j)));					
-					}
-					return registro;
-
-				} catch (Exception e) {
-					System.out.println("error");
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		} catch (URISyntaxException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-
-		return null;
-	}
 	public static  Registro get(String url,Map<String, Object>parametros) throws URISyntaxException{
 		HttpClient httpClient = HttpClientBuilder.create().build();
 
@@ -144,15 +93,18 @@ public class Request {
 			HttpGet method = new HttpGet(uri.build());
 			method.setHeader("Accept","application/json");
 
-
+		
 			try {
 				HttpResponse response = httpClient.execute(method);
 				HttpEntity entity = response.getEntity();
 				try {
 					String content = EntityUtils.toString(entity);	
-					System.out.println("CONTENIDO");
 					System.out.println(content);
-					JSONObject json=new JSONObject(content);				
+					JsonParser parser = new JsonParser();
+					JsonElement arrayElement = parser.parse(content.replace("{\"Entries\":{\"Entry\":", "").replace("}}",""));
+
+
+					JSONObject json=new JSONObject(arrayElement.getAsJsonArray().get(0).toString());
 					Registro registro=new Registro();
 					for (int j = 0; j < json.length(); j++) {					
 						registro.add(json.names().getString(j),json.get(json.names().getString(j)));					
@@ -168,53 +120,6 @@ public class Request {
 		} catch (URISyntaxException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
-		}
-
-		return null;
-	}
-
-	public static  Registro post(String url,Map<String, Object>parametros) throws URISyntaxException{
-		HttpClient httpClient = new DefaultHttpClient();
-		HttpPost httpPost = new HttpPost(url);
-		httpPost.setHeader(HttpHeaders.ACCEPT,"application/json");
-		if(parametros.get("token")!=null && !"".equals(parametros.get("token").toString())){
-			httpPost.setHeader("authorization", "Bearer " + parametros.get("token").toString());
-		}
-		List<NameValuePair> params = new ArrayList<NameValuePair>();
-		if(parametros!=null) {
-			for (Entry<String, Object> entry : parametros.entrySet()) {
-				if(entry!=null && entry.getValue()!=null){
-					params.add(new BasicNameValuePair(entry.getKey(),entry.getValue().toString()));
-				}else{
-					params.add(new BasicNameValuePair(entry.getKey(),null));
-				}
-			}
-		}
-		try {
-			httpPost.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
-		} catch (UnsupportedEncodingException e) {
-			// writing error to Log
-			e.printStackTrace();
-		}
-		try {
-			HttpResponse response = httpClient.execute(httpPost);
-			HttpEntity entity = response.getEntity();
-			try {
-				String content = EntityUtils.toString(entity);
-//				System.out.println("CONTENIDO");
-//				System.out.println(content.toString());
-				JSONObject json=new JSONObject(content);	
-				Registro registro=new Registro();
-				for (int j = 0; j < json.length(); j++) {	
-					registro.add(json.names().getString(j),json.get(json.names().getString(j)));					
-				}
-				return registro;
-
-			} catch (Exception e) {
-				System.out.println("error");
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
 		}
 
 		return null;
@@ -246,7 +151,7 @@ public class Request {
 				Registro registro=new Registro();
 				String content =  EntityUtils.toString(respEntity);
 				try {
-					JSONObject json = new JSONObject(content);
+					JSONObject json = new JSONObject(content.replace("{\"GeneratedKeys\":{\"Entry\":[", "").replace("]}}",""));
 
 					for (int j = 0; j < json.length(); j++) {					
 						registro.add(json.names().getString(j),json.get(json.names().getString(j)));					
