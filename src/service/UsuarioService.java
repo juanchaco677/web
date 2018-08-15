@@ -32,6 +32,27 @@ public class UsuarioService {
 		parametros.put("token",token);
 		return Request.post("http://localhost:8000/api/usuario/storeJX", parametros);
 	}
+	
+	public Registro actualizarUsuario(Usuario usuario , String token) throws URISyntaxException  {
+		Map<String,Object>parametros=new HashMap<>();				
+		parametros.put("departamento", usuario.getMesa().getPuntoVotacion().getLocalizacion().getCiudad().getDepartamento().getNombre());
+		parametros.put("ciudad", usuario.getMesa().getPuntoVotacion().getLocalizacion().getCiudad().getNombre());
+		parametros.put("latitud", usuario.getMesa().getPuntoVotacion().getLocalizacion().getLatitud());
+		parametros.put("longitud", usuario.getMesa().getPuntoVotacion().getLocalizacion().getLongitud());
+		parametros.put("direccion", usuario.getMesa().getPuntoVotacion().getLocalizacion().getDireccion());
+		parametros.put("puesto", usuario.getMesa().getPuntoVotacion().getNombre());
+		parametros.put("mesa", usuario.getMesa().getNumero());		
+		parametros.put("movil", usuario.getCelular());
+		parametros.put("nombre", !"".equals(usuario.getNombreUno()) && usuario.getNombreUno() !=null?usuario.getNombreUno():"FALTA");
+		parametros.put("nombre2", usuario.getNombreDos());
+		parametros.put("apellido", !"".equals(usuario.getApellidoUno()) && usuario.getApellidoUno()!=null?usuario.getApellidoUno():"FALTA");
+		parametros.put("apellido2", usuario.getApellidoDos());
+		parametros.put("nit",usuario.getCedula());
+		parametros.put("email",usuario.getCorreo());
+		parametros.put("type","E");
+		parametros.put("token",token);
+		return Request.post("http://localhost:8000/api/usuario/updateJX", parametros);
+	}
 
 	public Registro sesion(Usuario usuario) throws URISyntaxException{
 		Map<String,Object>parametros=new HashMap<>();				
@@ -48,10 +69,11 @@ public class UsuarioService {
 		return Request.get("http://localhost:8000/api/usuario/getUsuario", parametros);
 	}
 	
-	public List<Registro> consultaMasivoPersona(int cantidad, String token) throws URISyntaxException   {
+	public List<Registro> consultaMasivoPersona(int cantidad, String token,int idCandidato) throws URISyntaxException   {
 		Map<String,Object>parametros=new HashMap<>();				
 		parametros.put("cantidad",cantidad);
 		parametros.put("token",token);
-		return Request.getList("http://localhost:8000/api/usuario/consultarMasivo", parametros);
+		parametros.put("id_candidato",idCandidato);
+		return Request.getList("http://localhost:8000/api/usuario/masivo", parametros);
 	}
 }
