@@ -3,20 +3,15 @@ package view;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextField;
-
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
+import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.web.WebView;
@@ -35,6 +30,8 @@ public class ViewDashBoard extends Pane{
 
 	@FXML
 	private WebView webView;
+	@FXML
+	private Label testoMensaje;
 	@FXML
 	private HBox hBoxContainer;
 	@FXML
@@ -56,8 +53,10 @@ public class ViewDashBoard extends Pane{
 	private JFXButton btnGRegistraduriaIndividual;	
 	private Usuario authUser;
 	private static final String URL="https://wsp.registraduria.gov.co/censo/consultar/";
-	public ViewDashBoard(Parent root){
-
+	public ViewDashBoard(Parent root,Pane dialogo,Label testoMensaje,HBox hBoxCuerpo){
+		this.hBoxCuerpo=hBoxCuerpo;
+		this.testoMensaje=testoMensaje;
+		this.dialogo=dialogo;
 		this.root=root;
 		init();
 
@@ -69,8 +68,7 @@ public class ViewDashBoard extends Pane{
 		hBoxContainer=(HBox)root.lookup("#container");
 		hBoxRegistradura=(HBox)root.lookup("#registraduria");
 		hBoxPersona=(HBox)root.lookup("#persona");
-		hBoxCuerpo=(HBox)root.lookup("#cuerpo");
-		dialogo=(Pane)root.lookup("#dialogo");
+	
 		//objetos campos de login
 
 		nombreCompleto=(JFXTextField)root.lookup("#nombreCompleto");
@@ -85,12 +83,11 @@ public class ViewDashBoard extends Pane{
 			System.out.println("NULL");
 		}
 
-
-
 		btnGRegistraduriaIndividual.setOnMouseClicked(new EventHandler() {
 
 			@Override
 			public void handle(Event arg0) {
+				hBoxCuerpo.setVisible(true);
 				registro=capturarDatosRegistraduria();
 				if(registro !=null && registro.getCampos() !=null){
 					UsuarioService usuarioService=new UsuarioService();
@@ -107,14 +104,17 @@ public class ViewDashBoard extends Pane{
 						Registro registro=usuarioService.crearUsuario(usuario,authUser!=null?authUser.getToken():"");
 						if(registro !=null && registro.getCampos()!=null){
 							String mensaje=registro.getCampos().get("data").toString();
+							hBoxCuerpo.setVisible(false);
+							dialogo.setVisible(true);
 							if(Boolean.valueOf(registro.getCampos().get("success").toString())){
-								System.out.println(mensaje);
-								registro=null;
-							}else{
-								System.out.println(mensaje);
-								registro=null;
+								hBoxCuerpo.setVisible(false);							
+								testoMensaje.setText(mensaje);
+								registro=null;								
+							}else{							
+								testoMensaje.setText(mensaje);
+								registro=null;							
 							}
-
+							desaparecerDialogo(3000);
 						}
 					} catch (URISyntaxException e) {
 						// TODO Auto-generated catch block
@@ -142,12 +142,14 @@ public class ViewDashBoard extends Pane{
 			}
 		});
 	}
-
-	public Parent getRoot() {
-		return root;
-	}
-	public void setRoot(Parent root) {
-		this.root = root;
+	private void desaparecerDialogo(int segundos) {
+		try {
+			Thread.sleep(segundos);
+			dialogo.setVisible(false);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 
@@ -182,12 +184,12 @@ public class ViewDashBoard extends Pane{
 					Registro registroAux=Request.getGoogle("https://maps.googleapis.com/maps/api/geocode/json", parametros);
 					if(registroAux !=null && "OK".equals(registroAux.getCampos().get("status").toString())){						
 						String cadena=registroAux.getCampos().get("results").toString();
-						String resultado=encontrarCadena(cadena,"","");
-						registro.getCampos().put("direccion",resultado);
-						resultado=encontrarCadena(cadena,"","");
-						registro.getCampos().put("latitud",resultado);
-						resultado=encontrarCadena(cadena,"","");
-						registro.getCampos().put("longitud",resultado);
+						String resultado=encontrarCadena(cadena,"\"formatted_address\": \"","\"geometry\":");
+						registro.getCampos().put("direccion",resultado.replace("\",","").trim());
+						resultado=encontrarCadena(cadena,"\"lat\":","\"lng\":");
+						registro.getCampos().put("latitud",resultado.replace(",","").trim());
+						resultado=encontrarCadena(cadena,"\"lng\":","\"southwest\"");
+						registro.getCampos().put("longitud",resultado.replace("},", "").trim());
 
 					}
 				} catch (URISyntaxException e) {
@@ -276,6 +278,13 @@ public class ViewDashBoard extends Pane{
 	}
 	public void setAuthUser(Usuario authUser) {
 		this.authUser = authUser;
+	}
+
+	public Parent getRoot() {
+		return root;
+	}
+	public void setRoot(Parent root) {
+		this.root = root;
 	}
 
 
