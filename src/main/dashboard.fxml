@@ -17,7 +17,7 @@
                <children>
                   <VBox prefHeight="266.0" prefWidth="300.0" styleClass="sidebar">
                      <children>
-                        <Label prefHeight="290.0" prefWidth="300.0" style="-fx-background-color: #00A2D3;" text="Concejal" textAlignment="CENTER" textFill="WHITE" VBox.vgrow="ALWAYS">
+                        <Label fx:id="nombreUsuario" prefHeight="290.0" prefWidth="300.0" style="-fx-background-color: #00A2D3;" text="Concejal" textAlignment="CENTER" textFill="WHITE" VBox.vgrow="ALWAYS">
                            <font>
                               <Font size="19.0" />
                            </font>
@@ -32,7 +32,7 @@
                                     <Image url="@../imagenes/icons8-file-64.png" />
                                  </image>
                               </ImageView>
-                              <Label prefHeight="59.0" prefWidth="174.0" text="Registraduria" textFill="#c9c1c1" />
+                              <Label fx:id="registraduria" prefHeight="59.0" prefWidth="174.0" text="Registraduria" textFill="#c9c1c1" />
                            </children>
                            <opaqueInsets>
                               <Insets />
@@ -48,7 +48,7 @@
                                     <Image url="@../imagenes/icons8-contacts-64.png" />
                                  </image>
                               </ImageView>
-                              <Label prefHeight="50.0" prefWidth="184.0" text="Persona" textFill="#c9c1c1" />
+                              <Label fx:id="masivo" prefHeight="50.0" prefWidth="184.0" text="Masivo Persona" textFill="#c9c1c1" />
                            </children>
                            <padding>
                               <Insets bottom="20.0" />
@@ -92,26 +92,43 @@
                   </VBox>
                   <HBox fx:id="container" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="400.0" prefWidth="1000.0" styleClass="parent">
                      <children>
-                        <WebView fx:id="web" prefHeight="400.0" prefWidth="801.0" />
-                        <VBox alignment="CENTER" prefHeight="800.0" prefWidth="197.0">
+                        <HBox fx:id="registraduriaContainer" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="400.0" prefWidth="1000.0" styleClass="parent">
                            <children>
-                              <JFXTextField fx:id="nombreCompleto" prefHeight="37.0" prefWidth="197.0" promptText="Nombre Completo">
-                                 <VBox.margin>
-                                    <Insets bottom="15.0" />
-                                 </VBox.margin>
-                              </JFXTextField>
-                              <JFXTextField fx:id="celular" prefHeight="37.0" prefWidth="197.0" promptText="Celular">
-                                 <VBox.margin>
-                                    <Insets bottom="15.0" />
-                                 </VBox.margin>
-                              </JFXTextField>
-                              <JFXButton fx:id="btnGRegistraduriaIndividual" prefHeight="43.0" prefWidth="197.0" style="-fx-background-color: #3f51b5;" text="Guardar" textFill="WHITE">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </JFXButton>
+                              <WebView fx:id="web" prefHeight="400.0" prefWidth="801.0" />
+                              <VBox alignment="CENTER" prefHeight="800.0" prefWidth="197.0">
+                                 <children>
+                                    <VBox fx:id="formRegistraduria" alignment="CENTER" prefHeight="194.0" prefWidth="197.0">
+                                       <children>
+                                          <JFXTextField fx:id="nombreCompleto" prefHeight="37.0" prefWidth="197.0" promptText="Nombre Completo">
+                                             <VBox.margin>
+                                                <Insets bottom="15.0" />
+                                             </VBox.margin>
+                                          </JFXTextField>
+                                          <JFXTextField fx:id="celular" prefHeight="37.0" prefWidth="197.0" promptText="Celular">
+                                             <VBox.margin>
+                                                <Insets bottom="15.0" />
+                                             </VBox.margin>
+                                          </JFXTextField>
+                                          <JFXButton fx:id="btnGRegistraduriaIndividual" prefHeight="43.0" prefWidth="197.0" style="-fx-background-color: #3f51b5;" text="Guardar" textFill="WHITE">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </JFXButton>
+                                       </children>
+                                    </VBox>
+                                    <VBox fx:id="formMasivo" prefHeight="52.0" prefWidth="197.0" visible="false">
+                                       <children>
+                                          <JFXButton fx:id="btnIniciarMasivo" prefHeight="43.0" prefWidth="197.0" style="-fx-background-color: #3f51b5;" text="Iniciar Proceso" textFill="WHITE">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </JFXButton>
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </VBox>
                            </children>
-                        </VBox>
+                        </HBox>
                      </children>
                   </HBox>
                </children>
