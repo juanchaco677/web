@@ -2,6 +2,7 @@ package service;
 
 import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import model.Usuario;
@@ -45,5 +46,12 @@ public class UsuarioService {
 		Map<String,Object>parametros=new HashMap<>();				
 		parametros.put("token", token);
 		return Request.get("http://localhost:8000/api/usuario/getUsuario", parametros);
+	}
+	
+	public List<Registro> consultaMasivoPersona(int cantidad, String token) throws URISyntaxException   {
+		Map<String,Object>parametros=new HashMap<>();				
+		parametros.put("cantidad",cantidad);
+		parametros.put("token",token);
+		return Request.getList("http://localhost:8000/api/usuario/consultarMasivo", parametros);
 	}
 }
