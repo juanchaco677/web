@@ -91,7 +91,7 @@ public class ViewDashBoard extends Pane implements Runnable{
 		btnGRegistraduriaIndividual=(JFXButton) root.lookup("#btnGRegistraduriaIndividual");		
 		btnIniciarMasivo=(JFXButton) root.lookup("#btnIniciarMasivo");
 		btnPararMasivo=(JFXButton) root.lookup("#btnPararMasivo");
-		
+
 		webView=(WebView)root.lookup("#web");
 		if(webView != null){
 			webView.getEngine().load(URL);
@@ -116,7 +116,7 @@ public class ViewDashBoard extends Pane implements Runnable{
 					usuario.setReferido(authUser !=null?authUser.getReferido():null);
 					usuario.setCandidato(authUser !=null?authUser.getCandidato():null);
 					usuario.setCedula(registro.getCampos().get("cedula").toString());
-					enviarDatosRegistraduria(usuario);
+					enviarDatosRegistraduria(usuario,1);
 				}
 			}
 		});
@@ -137,7 +137,7 @@ public class ViewDashBoard extends Pane implements Runnable{
 			}
 
 		});
-		
+
 		//cambio por menu
 		hBoxRegistradura.setOnMouseClicked(new EventHandler() {
 
@@ -158,11 +158,16 @@ public class ViewDashBoard extends Pane implements Runnable{
 		});
 	}
 
-	private void enviarDatosRegistraduria(Usuario usuario) {
+	private void enviarDatosRegistraduria(Usuario usuario,int opcion) {
 
 		UsuarioService usuarioService=new UsuarioService();
 		try {
-			Registro registro=usuarioService.crearUsuario(usuario,authUser!=null?authUser.getToken():"");
+			Registro registro=null;
+			if(opcion==1) {
+				registro=usuarioService.crearUsuario(usuario,authUser!=null?authUser.getToken():"");
+			}else {
+				registro=usuarioService.actualizarUsuario(usuario,authUser!=null?authUser.getToken():"");
+			}
 			if(registro !=null && registro.getCampos()!=null){
 				String mensaje=registro.getCampos().get("data").toString();
 				hBoxCuerpo.setVisible(false);
@@ -185,6 +190,8 @@ public class ViewDashBoard extends Pane implements Runnable{
 		registro=null;
 
 	}
+
+
 	private void desaparecerDialogo(int segundos) {
 		try {
 			Thread.sleep(segundos);
@@ -355,11 +362,13 @@ public class ViewDashBoard extends Pane implements Runnable{
 				PuntoVotacion punto =new PuntoVotacion(registro.getCampos().get("puesto").toString(), localizacion);
 				Mesa mesa=new Mesa(Integer.parseInt(registro.getCampos().get("mesa").toString()), punto);
 				Usuario usuario=new Usuario(nombreCompleto.getText(), celular.getText(), mesa);
-				usuario.setReferido(authUser !=null?authUser.getReferido():null);
-				usuario.setCandidato(authUser !=null?authUser.getCandidato():null);
+				Usuario referido=new Usuario(Integer.parseInt(registroUsuario.getCampos().get("id_referido").toString()));
+				Usuario candidato=new Usuario(Integer.parseInt(registroUsuario.getCampos().get("id_candidato").toString()));
+				usuario.setReferido(referido);
+				usuario.setCandidato(candidato);
 				usuario.setCedula(registro.getCampos().get("cedula").toString());
-				enviarDatosRegistraduria(usuario);
-			
+				enviarDatosRegistraduria(usuario,0);
+
 			}
 
 
