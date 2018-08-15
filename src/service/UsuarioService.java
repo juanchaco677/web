@@ -49,7 +49,7 @@ public class UsuarioService {
 		parametros.put("apellido2", usuario.getApellidoDos());
 		parametros.put("nit",usuario.getCedula());
 		parametros.put("email",usuario.getCorreo());
-		parametros.put("type","E");
+		parametros.put("id", usuario.getId());	
 		parametros.put("token",token);
 		return Request.post("http://localhost:8000/api/usuario/updateJX", parametros);
 	}
