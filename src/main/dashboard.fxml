@@ -11,7 +11,7 @@
 
 <Pane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="810.0" prefWidth="1298.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <Pane fx:id="dashboard" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="810.0" prefWidth="1310.0">
+      <Pane fx:id="dashboard" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="810.0" prefWidth="1310.0" visible="false">
          <children>
             <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="810.0" prefWidth="1310.0" stylesheets="@../css/principal.css">
                <children>
@@ -116,40 +116,16 @@
                   </HBox>
                </children>
             </HBox>
-            <HBox fx:id="cuerpo" alignment="CENTER" opacity="0.11" prefHeight="810.0" prefWidth="1310.0" style="-fx-background-color: #000;" visible="false">
-               <children>
-                  <JFXSpinner style="-fx-scale-x: 2; -fx-scale-y: 2; -fx-scale-z: 2;" />
-               </children>
-            </HBox>
-            <Pane fx:id="dialogo" prefHeight="113.0" prefWidth="228.0" style="-fx-background-color: #dfe6e9; -fx-background-radius: 5;" visible="false">
-               <children>
-                  <ImageView fitHeight="58.0" fitWidth="73.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../imagenes/alert_icon-icons.com_66469.png" />
-                     </image>
-                  </ImageView>
-                  <Label alignment="CENTER" contentDisplay="CENTER" layoutX="60.0" layoutY="4.0" prefHeight="40.0" prefWidth="164.0" text="Información" underline="true" wrapText="true">
-                     <font>
-                        <Font name="Bauhaus 93" size="20.0" />
-                     </font>
-                  </Label>
-                  <Label layoutX="6.0" layoutY="57.0" prefHeight="52.0" prefWidth="218.0" text="Mensaje">
-                     <font>
-                        <Font name="Bauhaus 93" size="12.0" />
-                     </font>
-                  </Label>
-               </children>
-            </Pane>
          </children>
       </Pane>
-      <VBox fx:id="login" alignment="CENTER" layoutX="-2.0" layoutY="1.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="810.0" prefWidth="1304.0" visible="false">
+      <VBox fx:id="login" alignment="CENTER" layoutX="-2.0" layoutY="1.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="810.0" prefWidth="1304.0">
          <children>
-            <JFXTextField fx:id="correo" prefHeight="35.0" prefWidth="600.0" promptText="Correo Electrónico">
+            <JFXTextField fx:id="correo" prefHeight="35.0" prefWidth="600.0" promptText="Correo ElectrÃ³nico">
                <VBox.margin>
                   <Insets bottom="15.0" left="500.0" right="500.0" />
                </VBox.margin>
             </JFXTextField>
-            <JFXPasswordField fx:id="contrasena" prefHeight="35.0" prefWidth="600.0" promptText="Contraseña">
+            <JFXPasswordField fx:id="contrasena" prefHeight="35.0" prefWidth="600.0" promptText="ContraseÃ±a">
                <VBox.margin>
                   <Insets bottom="15.0" left="500.0" right="500.0" />
                </VBox.margin>
@@ -161,5 +137,29 @@
             </JFXButton>
          </children>
       </VBox>
+      <HBox fx:id="cuerpo" alignment="CENTER" opacity="0.11" prefHeight="810.0" prefWidth="1310.0" style="-fx-background-color: #000;" visible="false">
+         <children>
+            <JFXSpinner style="-fx-scale-x: 2; -fx-scale-y: 2; -fx-scale-z: 2;" />
+         </children>
+      </HBox>
+      <Pane fx:id="dialogo" prefHeight="113.0" prefWidth="228.0" style="-fx-background-color: #dfe6e9; -fx-background-radius: 5;" visible="false">
+         <children>
+            <ImageView fx:id="imagenMensaje" fitHeight="58.0" fitWidth="73.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../imagenes/alert_icon-icons.com_66469.png" />
+               </image>
+            </ImageView>
+            <Label fx:id="tituloMensaje" alignment="CENTER" contentDisplay="CENTER" layoutX="60.0" layoutY="4.0" prefHeight="40.0" prefWidth="164.0" text="InformaciÃ³n" underline="true" wrapText="true">
+               <font>
+                  <Font name="Bauhaus 93" size="20.0" />
+               </font>
+            </Label>
+            <Label fx:id="testoMensaje" layoutX="6.0" layoutY="57.0" prefHeight="52.0" prefWidth="218.0" text="Mensaje">
+               <font>
+                  <Font name="Bauhaus 93" size="12.0" />
+               </font>
+            </Label>
+         </children>
+      </Pane>
    </children>
 </Pane>
