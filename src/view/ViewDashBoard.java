@@ -1,34 +1,19 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package view;
 
-import java.io.File;
-import java.io.IOException;
 import java.net.URISyntaxException;
-import java.net.URL;
 
-import org.omg.CosNaming.NamingContextExtPackage.StringNameHelper;
 import org.w3c.dom.Document;
 
 import com.jfoenix.controls.JFXButton;
-import com.jfoenix.controls.JFXPasswordField;
 import com.jfoenix.controls.JFXTextField;
 
-import javafx.application.Application;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
 import javafx.scene.web.WebView;
-import javafx.stage.Stage;
 import model.Ciudad;
 import model.Departamento;
 import model.Localizacion;
@@ -38,11 +23,9 @@ import model.Usuario;
 import service.UsuarioService;
 import util.Registro;
 
-/**
- *
- * @author camilo
- */
-public class VentanaFX extends Application  {
+public class ViewDashBoard extends Pane{
+	private Parent root;
+	
 	@FXML
 	private WebView webView;
 	@FXML
@@ -56,93 +39,39 @@ public class VentanaFX extends Application  {
 	@FXML
 	private Pane dialogo;	
 	@FXML
-	private Pane dashboard;	
-	@FXML
-	private VBox login;
-	@FXML
-	private JFXTextField correo;
-	@FXML
-	private JFXPasswordField contrasena;
-	@FXML
-	private JFXButton btnIngresar;	
-	@FXML
-	private JFXButton btnGRegistraduriaIndividual;
+	private Pane dashboard;		
 	private Registro registro;
-
-	private Usuario authUser;
 	@FXML
 	private JFXTextField nombreCompleto;
 	@FXML
 	private JFXTextField celular;
+	@FXML
+	private JFXButton btnGRegistraduriaIndividual;
 
-	public VentanaFX(){
-
+	public ViewDashBoard(Parent root){
+		this.root=root;
+		init();
+		
 	}
-
-	@Override
-	public void start(Stage primaryStage) {
-		try {
-			crearVentana(primaryStage,"https://wsp.registraduria.gov.co/censo/consultar/");
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private void crearVentana(Stage stage,String url) throws IOException {
-		@SuppressWarnings("deprecation")
-		URL rutaFxml = new File("src/main/dashboard.fxml").toURL();
-		Parent root = FXMLLoader.load(rutaFxml);
-		webView=(WebView)root.lookup("#web");
-		if(webView != null){
-			webView.getEngine().load(url);
-		}else{
-			System.out.println("NULL");
-		}
-		Scene scene = new Scene(root);
-
-		stage.setScene(scene);
-		stage.setTitle("Software Valerian");
-		stage.show();
-
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private void init(){
 		//objetos campos dashboard
+		dashboard=(Pane)root.lookup("#dashboard");
 		hBoxContainer=(HBox)root.lookup("#container");
 		hBoxRegistradura=(HBox)root.lookup("#registraduria");
 		hBoxPersona=(HBox)root.lookup("#persona");
 		hBoxCuerpo=(HBox)root.lookup("#cuerpo");
 		dialogo=(Pane)root.lookup("#dialogo");
 		//objetos campos de login
-		correo=(JFXTextField)root.lookup("#correo");
-		contrasena=(JFXPasswordField) root.lookup("#contrasena");
+		
 		nombreCompleto=(JFXTextField)root.lookup("#nombreCompleto");
 		celular=(JFXTextField)root.lookup("#celular");
-		btnIngresar=(JFXButton) root.lookup("#btnIngresar");
+
 		btnGRegistraduriaIndividual=(JFXButton) root.lookup("#btnGRegistraduriaIndividual");
-		login=(VBox)root.lookup("#login");
-		dashboard=(Pane)root.lookup("#dashboard");
+	
 
-		btnIngresar.setOnMouseClicked(new EventHandler() {
-
-			@Override
-			public void handle(Event arg0) {
-				UsuarioService usuarioService=new UsuarioService();
-				try {
-					Registro registro=usuarioService.sesion(new Usuario(correo.getText().toString(),contrasena.getText().toString()));
-					if(registro!=null) {
-						Registro registroUsuario=usuarioService.getUsuario(registro.getCampos().get("token").toString());
-						if(registroUsuario!=null){
-							authUser=new Usuario(registroUsuario);
-							login.setVisible(false);
-							dashboard.setVisible(true);
-						}
-					}
-				} catch (URISyntaxException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-
-			}
-		});
+		
+		
 
 		btnGRegistraduriaIndividual.setOnMouseClicked(new EventHandler() {
 
@@ -185,9 +114,16 @@ public class VentanaFX extends Application  {
 
 			}
 		});
-
 	}
-
+	
+	public Parent getRoot() {
+		return root;
+	}
+	public void setRoot(Parent root) {
+		this.root = root;
+	}
+	
+	
 	private Registro capturarDatosRegistraduria(){
 		Registro registro=new Registro();
 		Document document=webView.getEngine().getDocument();
@@ -204,6 +140,72 @@ public class VentanaFX extends Application  {
 		}
 		return registro;
 	}
-
-
+	public WebView getWebView() {
+		return webView;
+	}
+	public void setWebView(WebView webView) {
+		this.webView = webView;
+	}
+	public HBox gethBoxContainer() {
+		return hBoxContainer;
+	}
+	public void sethBoxContainer(HBox hBoxContainer) {
+		this.hBoxContainer = hBoxContainer;
+	}
+	public HBox gethBoxRegistradura() {
+		return hBoxRegistradura;
+	}
+	public void sethBoxRegistradura(HBox hBoxRegistradura) {
+		this.hBoxRegistradura = hBoxRegistradura;
+	}
+	public HBox gethBoxPersona() {
+		return hBoxPersona;
+	}
+	public void sethBoxPersona(HBox hBoxPersona) {
+		this.hBoxPersona = hBoxPersona;
+	}
+	public HBox gethBoxCuerpo() {
+		return hBoxCuerpo;
+	}
+	public void sethBoxCuerpo(HBox hBoxCuerpo) {
+		this.hBoxCuerpo = hBoxCuerpo;
+	}
+	public Pane getDialogo() {
+		return dialogo;
+	}
+	public void setDialogo(Pane dialogo) {
+		this.dialogo = dialogo;
+	}
+	public Pane getDashboard() {
+		return dashboard;
+	}
+	public void setDashboard(Pane dashboard) {
+		this.dashboard = dashboard;
+	}
+	public Registro getRegistro() {
+		return registro;
+	}
+	public void setRegistro(Registro registro) {
+		this.registro = registro;
+	}
+	public JFXTextField getNombreCompleto() {
+		return nombreCompleto;
+	}
+	public void setNombreCompleto(JFXTextField nombreCompleto) {
+		this.nombreCompleto = nombreCompleto;
+	}
+	public JFXTextField getCelular() {
+		return celular;
+	}
+	public void setCelular(JFXTextField celular) {
+		this.celular = celular;
+	}
+	public JFXButton getBtnGRegistraduriaIndividual() {
+		return btnGRegistraduriaIndividual;
+	}
+	public void setBtnGRegistraduriaIndividual(JFXButton btnGRegistraduriaIndividual) {
+		this.btnGRegistraduriaIndividual = btnGRegistraduriaIndividual;
+	}
+	
+	
 }
