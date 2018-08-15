@@ -123,6 +123,11 @@
                                                 <Font size="14.0" />
                                              </font>
                                           </JFXButton>
+                                          <JFXButton fx:id="btnPararMasivo" prefHeight="43.0" prefWidth="197.0" style="-fx-background-color: #3f51b5;" text="Parar Proceso" textFill="WHITE">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </JFXButton>
                                        </children>
                                     </VBox>
                                  </children>
