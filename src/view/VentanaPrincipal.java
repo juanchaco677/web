@@ -10,9 +10,13 @@ import java.io.IOException;
 import java.net.URL;
 
 import javafx.application.Application;
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
 /**
@@ -23,7 +27,12 @@ public class VentanaPrincipal extends Application  {
 
 	private ViewDashBoard viewDashBoard;
 	private ViewLogin viewLogin;
-	
+	@FXML
+	private Pane dialogo;	
+	@FXML
+	private Label testoMensaje;
+	@FXML
+	private HBox hBoxCuerpo;
 	public VentanaPrincipal(){
 
 	}
@@ -48,8 +57,11 @@ public class VentanaPrincipal extends Application  {
 		stage.setScene(scene);
 		stage.setTitle("Software Valerian");
 		stage.show();
-		viewDashBoard=new ViewDashBoard(root);
-		viewLogin=new ViewLogin(root,viewDashBoard);
+		dialogo=(Pane)root.lookup("#dialogo");
+		testoMensaje=(Label)root.lookup("#testoMensaje");
+		hBoxCuerpo=(HBox)root.lookup("#cuerpo");
+		viewDashBoard=new ViewDashBoard(root,dialogo,testoMensaje,hBoxCuerpo);
+		viewLogin=new ViewLogin(root,viewDashBoard,dialogo,testoMensaje,hBoxCuerpo);
 
 
 		
