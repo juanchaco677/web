@@ -53,8 +53,10 @@ public class ViewLogin {
 						Registro registroUsuario=usuarioService.getUsuario(registro.getCampos().get("token").toString());
 						if(registroUsuario!=null){
 							authUser=new Usuario(registroUsuario);
+							authUser.setToken(registro.getCampos().get("token").toString());
 							login.setVisible(false);
 							viewDashBoard.getDashboard().setVisible(true);
+							viewDashBoard.setAuthUser(authUser);
 						}
 					}
 				} catch (URISyntaxException e) {

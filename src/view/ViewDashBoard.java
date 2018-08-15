@@ -1,8 +1,14 @@
 package view;
 
 import java.net.URISyntaxException;
+import java.util.HashMap;
+import java.util.Map;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextField;
@@ -22,10 +28,11 @@ import model.PuntoVotacion;
 import model.Usuario;
 import service.UsuarioService;
 import util.Registro;
+import util.Request;
 
 public class ViewDashBoard extends Pane{
 	private Parent root;
-	
+
 	@FXML
 	private WebView webView;
 	@FXML
@@ -46,12 +53,14 @@ public class ViewDashBoard extends Pane{
 	@FXML
 	private JFXTextField celular;
 	@FXML
-	private JFXButton btnGRegistraduriaIndividual;
-
+	private JFXButton btnGRegistraduriaIndividual;	
+	private Usuario authUser;
+	private static final String URL="https://wsp.registraduria.gov.co/censo/consultar/";
 	public ViewDashBoard(Parent root){
+
 		this.root=root;
 		init();
-		
+
 	}
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private void init(){
@@ -63,22 +72,26 @@ public class ViewDashBoard extends Pane{
 		hBoxCuerpo=(HBox)root.lookup("#cuerpo");
 		dialogo=(Pane)root.lookup("#dialogo");
 		//objetos campos de login
-		
+
 		nombreCompleto=(JFXTextField)root.lookup("#nombreCompleto");
 		celular=(JFXTextField)root.lookup("#celular");
 
 		btnGRegistraduriaIndividual=(JFXButton) root.lookup("#btnGRegistraduriaIndividual");
-	
 
-		
-		
+		webView=(WebView)root.lookup("#web");
+		if(webView != null){
+			webView.getEngine().load(URL);
+		}else{
+			System.out.println("NULL");
+		}
+
+
 
 		btnGRegistraduriaIndividual.setOnMouseClicked(new EventHandler() {
 
 			@Override
 			public void handle(Event arg0) {
 				registro=capturarDatosRegistraduria();
-
 				if(registro !=null && registro.getCampos() !=null){
 					UsuarioService usuarioService=new UsuarioService();
 					Departamento departamento=new Departamento(registro.getCampos().get("departamento").toString());
@@ -87,15 +100,29 @@ public class ViewDashBoard extends Pane{
 					PuntoVotacion punto =new PuntoVotacion(registro.getCampos().get("puesto").toString(), localizacion);
 					Mesa mesa=new Mesa(Integer.parseInt(registro.getCampos().get("mesa").toString()), punto);
 					Usuario usuario=new Usuario(nombreCompleto.getText(), celular.getText(), mesa);
+					usuario.setReferido(authUser !=null?authUser.getReferido():null);
+					usuario.setCandidato(authUser !=null?authUser.getCandidato():null);
+					usuario.setCedula(registro.getCampos().get("cedula").toString());
 					try {
-						usuarioService.crearUsuario(usuario);
+						Registro registro=usuarioService.crearUsuario(usuario,authUser!=null?authUser.getToken():"");
+						if(registro !=null && registro.getCampos()!=null){
+							String mensaje=registro.getCampos().get("data").toString();
+							if(Boolean.valueOf(registro.getCampos().get("success").toString())){
+								System.out.println(mensaje);
+								registro=null;
+							}else{
+								System.out.println(mensaje);
+								registro=null;
+							}
+
+						}
 					} catch (URISyntaxException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 					registro=null;
 				}
-			
+
 			}
 		});
 
@@ -115,31 +142,74 @@ public class ViewDashBoard extends Pane{
 			}
 		});
 	}
-	
+
 	public Parent getRoot() {
 		return root;
 	}
 	public void setRoot(Parent root) {
 		this.root = root;
 	}
-	
-	
+
+
 	private Registro capturarDatosRegistraduria(){
 		Registro registro=new Registro();
 		Document document=webView.getEngine().getDocument();
-		registro.getCampos().put("cedula",document.getElementsByTagName("td").item(0).getTextContent());
-		registro.getCampos().put("departamento",document.getElementsByTagName("td").item(1).getTextContent());
-		registro.getCampos().put("ciudad",document.getElementsByTagName("td").item(2).getTextContent());
-		registro.getCampos().put("puesto",document.getElementsByTagName("td").item(3).getTextContent());
-		registro.getCampos().put("direccion",document.getElementsByTagName("td").item(4).getTextContent());
-		registro.getCampos().put("mesa",document.getElementsByTagName("td").item(5).getTextContent());
-		String [] localizacion=document.getElementsByTagName("td").item(7).getTextContent().split(",");
-		if(localizacion != null && localizacion.length > 0){
-		    registro.getCampos().put("localizacion",localizacion[0].split("&p=")[1]);	
-		    registro.getCampos().put("localizacion",localizacion[1]);
+		if(document.getElementsByTagName("td").getLength()>0){
+			registro.getCampos().put("cedula",document.getElementsByTagName("td").item(0).getTextContent());
+			registro.getCampos().put("departamento",document.getElementsByTagName("td").item(1).getTextContent());
+			registro.getCampos().put("ciudad",document.getElementsByTagName("td").item(2).getTextContent());
+			registro.getCampos().put("puesto",document.getElementsByTagName("td").item(3).getTextContent());
+			registro.getCampos().put("direccion",document.getElementsByTagName("td").item(4).getTextContent());
+			registro.getCampos().put("mesa",document.getElementsByTagName("td").item(5).getTextContent());
+			Element hrefA=null;
+			if(document.getElementsByTagName("td").item(7)!=null){
+				 hrefA=(Element)document.getElementsByTagName("td").item(7).getChildNodes().item(0);
+					String [] localizacion=hrefA.getAttribute("href").split(",");		
+					if(localizacion != null && localizacion.length > 0){
+						registro.getCampos().put("longitud",localizacion[4].split("&p=")[1]);	
+						registro.getCampos().put("latitud",localizacion[5]);
+						return registro;
+					}
+			}else{
+				try {
+					Map<String,Object>parametros=new HashMap<>();	
+					String address=registro.getCampos().get("ciudad").toString().replace("D.C.","")
+							.replace(".","").trim().toLowerCase()+" "+registro.getCampos().get("puesto").toString().toLowerCase()
+							+" "+
+							registro.getCampos().get("direccion").toString();
+					parametros.put("address", address);
+					parametros.put("key", "AIzaSyAEYzgkz7vRYKNIINybhqWsxDUF2ZkUbNc");
+					Registro registroAux=Request.getGoogle("https://maps.googleapis.com/maps/api/geocode/json", parametros);
+					if(registroAux !=null && "OK".equals(registroAux.getCampos().get("status").toString())){
+						try {
+							JSONArray jsonArray=new JSONArray(registroAux.getCampos().get("results").toString());
+							for (int i = 0; i < jsonArray.length(); i++) {
+							    JSONObject json = jsonArray.getJSONObject(i);							 			
+								Registro registrof=new Registro();
+								for (int j = 0; j < json.length(); j++) {		
+									System.out.println(json.names().getString(j));
+									System.out.println(json.get(json.names().getString(j)));
+									System.out.println("------------");
+									registro.add(json.names().getString(j),json.get(json.names().getString(j)));					
+								}
+							}
+							System.out.println("OBJETO JSON");
+							System.out.println(jsonArray);
+						} catch (JSONException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+				} catch (URISyntaxException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		
 		}
-		return registro;
+		return null;	
 	}
+
 	public WebView getWebView() {
 		return webView;
 	}
@@ -206,6 +276,12 @@ public class ViewDashBoard extends Pane{
 	public void setBtnGRegistraduriaIndividual(JFXButton btnGRegistraduriaIndividual) {
 		this.btnGRegistraduriaIndividual = btnGRegistraduriaIndividual;
 	}
-	
-	
+	public Usuario getAuthUser() {
+		return authUser;
+	}
+	public void setAuthUser(Usuario authUser) {
+		this.authUser = authUser;
+	}
+
+
 }

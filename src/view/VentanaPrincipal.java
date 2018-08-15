@@ -31,14 +31,14 @@ public class VentanaPrincipal extends Application  {
 	@Override
 	public void start(Stage primaryStage) {
 		try {
-			crearVentana(primaryStage,"https://wsp.registraduria.gov.co/censo/consultar/");
+			crearVentana(primaryStage);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
-	private void crearVentana(Stage stage,String url) throws IOException {
+	private void crearVentana(Stage stage) throws IOException {
 		@SuppressWarnings("deprecation")
 		URL rutaFxml = new File("src/main/dashboard.fxml").toURL();
 		Parent root = FXMLLoader.load(rutaFxml);

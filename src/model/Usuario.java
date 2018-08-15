@@ -1,14 +1,13 @@
 package model;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import util.Registro;
 import util.ValerianUtil;
 
 public class Usuario {	
 
 	private int id;
+	
+	private String cedula;
 
 	private String correo;
 
@@ -31,6 +30,8 @@ public class Usuario {
 	private Usuario candidato;
 
 	private Usuario referido;
+	
+	private String token;
 
 	public Usuario(int id, String correo, String contrasena, String nombreUno, String nombreDos, String apellidoUno,
 			String apellidoDos, String celular, Mesa mesa) {
@@ -45,9 +46,9 @@ public class Usuario {
 		this.celular = celular;
 		this.mesa = mesa;
 	}
-	
-	
-	
+
+
+
 
 
 
@@ -59,32 +60,33 @@ public class Usuario {
 
 
 	public Usuario(String nombreCompleto, String celular,Mesa mesa) {
-
-		String [] arrayNombre=nombreCompleto.split(" ");		
-		this.nombreUno = recursivo(arrayNombre, 0);
-		this.nombreDos = recursivo(arrayNombre, 1);
-		this.apellidoUno = recursivo(arrayNombre, 2);
-		this.apellidoDos = recursivo(arrayNombre, 3);
+		if(!"".equals(nombreCompleto) && nombreCompleto !=null){
+			String [] arrayNombre=nombreCompleto.split(" ");		
+			this.nombreUno = recursivo(arrayNombre, 0);
+			this.nombreDos = recursivo(arrayNombre, 1);
+			this.apellidoUno = recursivo(arrayNombre, 2);
+			this.apellidoDos = recursivo(arrayNombre, 3);
+		}
 		this.celular = celular;
 		this.mesa=mesa;
 	}
 
 	public Usuario(Registro registro){
 
-			this.id=ValerianUtil.validarRegistro(registro, "id")?0:Integer.parseInt(ValerianUtil.valor(registro, "id").toString());
-			this.nombreUno=ValerianUtil.valor(registro, "name").toString();
-			this.nombreDos=ValerianUtil.valor(registro, "name").toString();
-			this.apellidoUno=ValerianUtil.valor(registro, "lastname").toString();
-			this.apellidoDos=ValerianUtil.valor(registro, "lastname2").toString();
-			this.type=ValerianUtil.valor(registro, "type").toString();
-			this.correo=ValerianUtil.valor(registro, "email").toString();		
-			this.mesa=new Mesa(ValerianUtil.validarRegistro(registro, "id_mesa")?0:Integer.parseInt(ValerianUtil.valor(registro, "id_mesa").toString()));
-			this.candidato=new Usuario(ValerianUtil.validarRegistro(registro, "id_candidato")?0:Integer.parseInt(ValerianUtil.valor(registro, "id_candidato").toString()));
-			this.referido=new Usuario(ValerianUtil.validarRegistro(registro, "id_referido")?0:Integer.parseInt(ValerianUtil.valor(registro, "id_candidato").toString()));
-			
-	
+		this.id=ValerianUtil.validarRegistro(registro, "id")?0:Integer.parseInt(ValerianUtil.valor(registro, "id").toString());
+		this.nombreUno=ValerianUtil.valor(registro, "name").toString();
+		this.nombreDos=ValerianUtil.valor(registro, "name").toString();
+		this.apellidoUno=ValerianUtil.valor(registro, "lastname").toString();
+		this.apellidoDos=ValerianUtil.valor(registro, "lastname2").toString();
+		this.type=ValerianUtil.valor(registro, "type").toString();
+		this.correo=ValerianUtil.valor(registro, "email").toString();		
+		this.mesa=new Mesa(ValerianUtil.validarRegistro(registro, "id_mesa")?0:Integer.parseInt(ValerianUtil.valor(registro, "id_mesa").toString()));
+		this.candidato=new Usuario(ValerianUtil.validarRegistro(registro, "id_candidato")?0:Integer.parseInt(ValerianUtil.valor(registro, "id_candidato").toString()));
+		this.referido=new Usuario(ValerianUtil.validarRegistro(registro, "id_referido")?0:Integer.parseInt(ValerianUtil.valor(registro, "id_candidato").toString()));
+
+
 	}
-	
+
 
 
 
@@ -199,6 +201,23 @@ public class Usuario {
 
 	public void setReferido(Usuario referido) {
 		this.referido = referido;
-	}	
+	}
+
+	public String getToken() {
+		return token;
+	}
+
+	public void setToken(String token) {
+		this.token = token;
+	}
+
+	public String getCedula() {
+		return cedula;
+	}
+
+	public void setCedula(String cedula) {
+		this.cedula = cedula;
+	}		
+	
 
 }

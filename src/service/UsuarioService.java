@@ -11,7 +11,7 @@ import util.Request;
 
 public class UsuarioService {
 
-	public Registro crearUsuario(Usuario usuario) throws URISyntaxException{
+	public Registro crearUsuario(Usuario usuario , String token) throws URISyntaxException  {
 		Map<String,Object>parametros=new HashMap<>();				
 		parametros.put("departamento", usuario.getMesa().getPuntoVotacion().getLocalizacion().getCiudad().getDepartamento().getNombre());
 		parametros.put("ciudad", usuario.getMesa().getPuntoVotacion().getLocalizacion().getCiudad().getNombre());
@@ -21,11 +21,15 @@ public class UsuarioService {
 		parametros.put("puesto", usuario.getMesa().getPuntoVotacion().getNombre());
 		parametros.put("mesa", usuario.getMesa().getNumero());		
 		parametros.put("movil", usuario.getCelular());
-		parametros.put("nombre", usuario.getNombreUno());
+		parametros.put("nombre", !"".equals(usuario.getNombreUno()) && usuario.getNombreUno() !=null?usuario.getNombreUno():"FALTA");
 		parametros.put("nombre2", usuario.getNombreDos());
-		parametros.put("apellido", usuario.getApellidoUno());
+		parametros.put("apellido", !"".equals(usuario.getApellidoUno()) && usuario.getApellidoUno()!=null?usuario.getApellidoUno():"FALTA");
 		parametros.put("apellido2", usuario.getApellidoDos());
-		return Request.get("http://localhost:8000/api/usuario/storeJX", parametros);
+		parametros.put("nit",usuario.getCedula());
+		parametros.put("email",usuario.getCorreo());
+		parametros.put("type","E");
+		parametros.put("token",token);
+		return Request.post("http://localhost:8000/api/usuario/storeJX", parametros);
 	}
 
 	public Registro sesion(Usuario usuario) throws URISyntaxException{
