@@ -2,11 +2,15 @@ package view;
 
 import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextField;
+
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -14,6 +18,7 @@ import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.scene.web.WebView;
 import model.Ciudad;
 import model.Departamento;
@@ -37,9 +42,13 @@ public class ViewDashBoard extends Pane{
 	@FXML
 	private HBox hBoxRegistradura;
 	@FXML
-	private HBox hBoxPersona;
-	@FXML
 	private HBox hBoxCuerpo;
+	@FXML
+	private HBox hBoxMasivo;
+	@FXML
+	private VBox formMasivo;
+	@FXML
+	private VBox formRegistraduria;	
 	@FXML
 	private Pane dialogo;	
 	@FXML
@@ -51,6 +60,9 @@ public class ViewDashBoard extends Pane{
 	private JFXTextField celular;
 	@FXML
 	private JFXButton btnGRegistraduriaIndividual;	
+	@FXML
+	private JFXButton btnIniciarMasivo;	
+	
 	private Usuario authUser;
 	private static final String URL="https://wsp.registraduria.gov.co/censo/consultar/";
 	public ViewDashBoard(Parent root,Pane dialogo,Label testoMensaje,HBox hBoxCuerpo){
@@ -67,14 +79,14 @@ public class ViewDashBoard extends Pane{
 		dashboard=(Pane)root.lookup("#dashboard");
 		hBoxContainer=(HBox)root.lookup("#container");
 		hBoxRegistradura=(HBox)root.lookup("#registraduria");
-		hBoxPersona=(HBox)root.lookup("#persona");
-	
+		hBoxMasivo=(HBox)root.lookup("#masivo");
+		formRegistraduria=(VBox)root.lookup("#formRegistraduria");
+		formMasivo=(VBox)root.lookup("#formMasivo");
 		//objetos campos de login
-
 		nombreCompleto=(JFXTextField)root.lookup("#nombreCompleto");
 		celular=(JFXTextField)root.lookup("#celular");
-
-		btnGRegistraduriaIndividual=(JFXButton) root.lookup("#btnGRegistraduriaIndividual");
+		btnGRegistraduriaIndividual=(JFXButton) root.lookup("#btnGRegistraduriaIndividual");		
+		btnIniciarMasivo=(JFXButton) root.lookup("#btnIniciarMasivo");
 
 		webView=(WebView)root.lookup("#web");
 		if(webView != null){
@@ -126,20 +138,38 @@ public class ViewDashBoard extends Pane{
 
 			}
 		});
+		
+		btnIniciarMasivo.setOnMouseClicked(new EventHandler() {
 
+			@Override
+			public void handle(Event arg0) {
+				UsuarioService usuarioService=new UsuarioService();
+				try {
+					List<Registro> listaUsuario=usuarioService.consultaMasivoPersona(10, authUser.getToken());
+				} catch (URISyntaxException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			
+		});
+
+		//cambio por menu
 		hBoxRegistradura.setOnMouseClicked(new EventHandler() {
 
 			@Override
 			public void handle(Event arg0) {
-
+				formMasivo.setVisible(false);
+				formRegistraduria.setVisible(true);
 			}
 		});
 
-		hBoxPersona.setOnMouseClicked(new EventHandler() {
+		hBoxMasivo.setOnMouseClicked(new EventHandler() {
 
 			@Override
-			public void handle(Event arg0) {
-
+			public void handle(Event arg0) {				
+				formRegistraduria.setVisible(false);
+				formMasivo.setVisible(true);
 			}
 		});
 	}
@@ -227,10 +257,10 @@ public class ViewDashBoard extends Pane{
 		this.hBoxRegistradura = hBoxRegistradura;
 	}
 	public HBox gethBoxPersona() {
-		return hBoxPersona;
+		return hBoxMasivo;
 	}
 	public void sethBoxPersona(HBox hBoxPersona) {
-		this.hBoxPersona = hBoxPersona;
+		this.hBoxMasivo = hBoxPersona;
 	}
 	public HBox gethBoxCuerpo() {
 		return hBoxCuerpo;
