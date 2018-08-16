@@ -41,14 +41,14 @@
                               <Insets bottom="20.0" />
                            </padding>
                         </HBox>
-                        <HBox fx:id="persona" alignment="CENTER_LEFT" prefHeight="58.0" prefWidth="200.0" styleClass="btns">
+                        <HBox fx:id="masivo" alignment="CENTER_LEFT" prefHeight="58.0" prefWidth="200.0" styleClass="btns">
                            <children>
                               <ImageView fitHeight="45.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
                                     <Image url="@../imagenes/icons8-contacts-64.png" />
                                  </image>
                               </ImageView>
-                              <Label fx:id="masivo" prefHeight="50.0" prefWidth="184.0" text="Masivo Persona" textFill="#c9c1c1" />
+                              <Label prefHeight="50.0" prefWidth="184.0" text="Masivo Persona" textFill="#c9c1c1" />
                            </children>
                            <padding>
                               <Insets bottom="20.0" />
