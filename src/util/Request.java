@@ -32,9 +32,9 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
 public class Request {
-	public static  List<Registro> getList(String url,Map<String, Object>parametros) throws URISyntaxException{
+		public static  List<Registro> getList(String url,Map<String, Object>parametros) throws URISyntaxException{
 		HttpClient httpClient = HttpClientBuilder.create().build();
-
+		List<Registro> lista=new ArrayList<>();
 		URIBuilder uri = null;
 		try {
 			uri = new URIBuilder(url);
@@ -50,27 +50,26 @@ public class Request {
 			try {
 				HttpResponse response = httpClient.execute(method);		
 				HttpEntity entity = response.getEntity();				
-				ArrayList lista = null;
+			
 				try {
-					String content = EntityUtils.toString(entity);	
-					System.out.println(content.toString());
-					JsonParser parser = new JsonParser();
-					JsonElement arrayElement = parser.parse(content);
-
-					lista=new ArrayList<>();
-
-					for (int i = 0; i < arrayElement.getAsJsonArray().size(); i++) {
-						JSONObject json=new JSONObject(arrayElement.getAsJsonArray().get(i).toString());
+					String content = EntityUtils.toString(entity);				
+					JSONObject json=new JSONObject(content);	
+					JSONArray jsonArray=new JSONArray(json.get("data").toString());
+			
+					for (int i=0; i < jsonArray.length(); i++) {
+				
+						JSONObject jsonR=jsonArray.getJSONObject(i);
 						Registro registro=new Registro();
-						for (int j = 0; j < json.length(); j++) {					
-							registro.add(json.names().getString(j),json.get(json.names().getString(j)));					
+						for (int j = 0; j < jsonR.length(); j++) {					
+							registro.add(jsonR.names().getString(j),jsonR.get(jsonR.names().getString(j)));					
 						}
 						lista.add(registro);
-					}
+					}		
+					return lista;
+
 				} catch (Exception e) {
 					System.out.println("error");
-				}
-				return lista;
+				}			
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
