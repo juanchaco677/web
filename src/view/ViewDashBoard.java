@@ -29,8 +29,9 @@ import model.Usuario;
 import service.UsuarioService;
 import util.Registro;
 import util.Request;
+import util.ValerianUtil;
 
-public class ViewDashBoard extends Pane implements Runnable{
+public class ViewDashBoard extends Pane {
 	private Parent root;
 
 	@FXML
@@ -64,7 +65,7 @@ public class ViewDashBoard extends Pane implements Runnable{
 	private JFXButton btnIniciarMasivo;	
 	@FXML
 	private JFXButton btnPararMasivo;	
-	private boolean masivoAutomatico;
+	private Thread backgroundThread;
 
 	private Usuario authUser;
 	private static final String URL="https://wsp.registraduria.gov.co/censo/consultar/";
@@ -127,16 +128,19 @@ public class ViewDashBoard extends Pane implements Runnable{
 
 			@Override
 			public void handle(Event arg0) {
-				tareaProgramadaMasivo();
-//				masivoAutomatico=true;
+				startTask();
 			}
 
 		});
 		btnPararMasivo.setOnMouseClicked(new EventHandler() {
 
+			@SuppressWarnings("deprecation")
 			@Override
 			public void handle(Event arg0) {
-//				masivoAutomatico=false;
+				if(backgroundThread != null) {
+					backgroundThread.suspend();
+				
+				}
 			}
 
 		});
@@ -351,31 +355,32 @@ public class ViewDashBoard extends Pane implements Runnable{
 			System.out.println(authUser.getType());
 			System.out.println("metodo tareprogramada"+authUser.getType());
 			int idCandidato="S".equals(authUser.getType())?authUser.getId():authUser.getCandidato().getId();
-			List<Registro> listaUsuario=usuarioService.consultaMasivoPersona(10, authUser.getToken(),idCandidato);
-//			hBoxCuerpo.setVisible(true);
+			List<Registro> listaUsuario=usuarioService.consultaMasivoPersona(10, authUser.getToken(),idCandidato);		
+		
+
 			for (Registro registroUsuario : listaUsuario) {
 				
-//				webView.getEngine().executeScript("document.getElementById(\"nuip\").value='"+registroUsuario.getCampos().get("nit").toString()+"';");
-//				webView.getEngine().executeScript("document.forms['form'].submit()");
-//				try {
-//					Thread.sleep(600);
-//				} catch (InterruptedException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
-//				registro=capturarDatosRegistraduria(registroUsuario.getCampos().get("nit").toString());
-//				Departamento departamento=new Departamento(registro.getCampos().get("departamento").toString());
-//				Ciudad ciudad=new Ciudad(registro.getCampos().get("ciudad").toString(),departamento);
-//				Localizacion localizacion=new Localizacion(new Double(registro.getCampos().get("latitud").toString()),new Double(registro.getCampos().get("longitud").toString()), registro.getCampos().get("direccion").toString(), ciudad);
-//				PuntoVotacion punto =new PuntoVotacion(registro.getCampos().get("puesto").toString(), localizacion);
-//				Mesa mesa=new Mesa(Integer.parseInt(registro.getCampos().get("mesa").toString()), punto);
-//				Usuario usuario=new Usuario(nombreCompleto.getText(), celular.getText(), mesa);
-//				Usuario referido=new Usuario(Integer.parseInt(registroUsuario.getCampos().get("id_referido").toString()));
-//				Usuario candidato=authUser.getCandidato();
-//				usuario.setReferido(referido);
-//				usuario.setCandidato(candidato);
-//				usuario.setCedula(registro.getCampos().get("cedula").toString());
-//				enviarDatosRegistraduria(usuario,0);
+				webView.getEngine().executeScript("document.getElementById(\"nuip\").value='"+registroUsuario.getCampos().get("nit").toString()+"';");
+				webView.getEngine().executeScript("document.forms['form'].submit()");
+				try {
+					Thread.sleep(600);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				registro=capturarDatosRegistraduria(registroUsuario.getCampos().get("nit").toString());
+				Departamento departamento=new Departamento(registro.getCampos().get("departamento").toString());
+				Ciudad ciudad=new Ciudad(registro.getCampos().get("ciudad").toString(),departamento);
+				Localizacion localizacion=new Localizacion(new Double(registro.getCampos().get("latitud").toString()),new Double(registro.getCampos().get("longitud").toString()), registro.getCampos().get("direccion").toString(), ciudad);
+				PuntoVotacion punto =new PuntoVotacion(registro.getCampos().get("puesto").toString(), localizacion);
+				Mesa mesa=new Mesa(Integer.parseInt(registro.getCampos().get("mesa").toString()), punto);
+				Usuario usuario=new Usuario(nombreCompleto.getText(), celular.getText(), mesa);
+				Usuario referido=new Usuario(ValerianUtil.validarRegistro(registroUsuario, "id_referido")?0:Integer.parseInt(registroUsuario.getCampos().get("id_referido").toString()));
+				Usuario candidato=authUser.getCandidato();
+				usuario.setReferido(referido);
+				usuario.setCandidato(candidato);
+				usuario.setCedula(registro.getCampos().get("cedula").toString());
+				enviarDatosRegistraduria(usuario,0);
 
 			}
 
@@ -386,22 +391,26 @@ public class ViewDashBoard extends Pane implements Runnable{
 		}
 	}
 
-	@Override
-	public void run() {
-		// TODO Auto-generated method stub
+	public void startTask()
 
-//		while(true) {
-//			if(masivoAutomatico) {
-//
-//				try {
-//					tareaProgramadaMasivo();
-//					Thread.sleep(400);
-//				} catch (InterruptedException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
-//			}
-//		}
+	{
+		// Create a Runnable
+		Runnable task = new Runnable()
+		{
+
+			public void run()
+
+			{			
+				tareaProgramadaMasivo();				
+			}
+
+		};
+		// Run the task in a background thread
+		backgroundThread = new Thread(task);
+		// Terminate the running thread if the application eits
+		backgroundThread.setDaemon(true);
+		// Start the thread
+		backgroundThread.start();
 
 	}
 
