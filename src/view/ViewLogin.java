@@ -2,6 +2,8 @@ package view;
 
 import java.net.URISyntaxException;
 
+import org.json.JSONException;
+
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXPasswordField;
 import com.jfoenix.controls.JFXTextField;
@@ -17,6 +19,7 @@ import javafx.scene.layout.VBox;
 import model.Usuario;
 import service.UsuarioService;
 import util.Registro;
+import util.ValerianUtil;
 
 public class ViewLogin {
 	private Usuario authUser;
@@ -61,10 +64,11 @@ public class ViewLogin {
 				try {
 					Registro registro=usuarioService.sesion(new Usuario(correo.getText().toString(),contrasena.getText().toString()));
 					if(registro!=null) {
-						Registro registroUsuario=usuarioService.getUsuario(registro.getCampos().get("token").toString());
+						Registro registroUsuario=ValerianUtil.convertirARegistro(usuarioService.getUsuario(registro.getCampos().get("token").toString()).getCampos().get("data").toString());
 						hBoxCuerpo.setVisible(false);
 						dialogo.setVisible(true);
 						if(registroUsuario!=null){
+						
 							authUser=new Usuario(registroUsuario);
 							authUser.setToken(registro.getCampos().get("token").toString());
 							login.setVisible(false);
@@ -76,7 +80,7 @@ public class ViewLogin {
 						}
 						desaparecerDialogo(3000);
 					}
-				} catch (URISyntaxException e) {
+				} catch (URISyntaxException | JSONException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
