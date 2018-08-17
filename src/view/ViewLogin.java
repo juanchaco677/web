@@ -59,24 +59,35 @@ public class ViewLogin {
 
 			@Override
 			public void handle(Event arg0) {
+				login.toBack();
+				hBoxCuerpo.toBack();
+				dialogo.toFront();
 				hBoxCuerpo.setVisible(true);
 				UsuarioService usuarioService=new UsuarioService();
 				try {
 					Registro registro=usuarioService.sesion(new Usuario(correo.getText().toString(),contrasena.getText().toString()));
-					if(registro!=null) {
-						Registro registroUsuario=ValerianUtil.convertirARegistro(usuarioService.getUsuario(registro.getCampos().get("token").toString()).getCampos().get("data").toString());
-						hBoxCuerpo.setVisible(false);
-						dialogo.setVisible(true);
-						if(registroUsuario!=null){
-						
-							authUser=new Usuario(registroUsuario);
-							authUser.setToken(registro.getCampos().get("token").toString());
-							login.setVisible(false);
-							viewDashBoard.getDashboard().setVisible(true);
-							viewDashBoard.setAuthUser(authUser);					
-							testoMensaje.setText("Las credenciales del usuario son correctas.");						
-						}else {							
-							testoMensaje.setText("Intente nuevamente ingresar las credenciales.");						
+					
+					dialogo.setVisible(true);
+					
+					if(registro!=null && registro.getCampos() !=null) {
+						if(!ValerianUtil.validarRegistro(registro, "token")) {
+							Registro registroUsuario=usuarioService.getUsuario(registro.getCampos().get("token").toString());			
+							
+							if(registroUsuario!=null){
+								registroUsuario=ValerianUtil.convertirARegistro(registroUsuario.getCampos().get("data").toString());
+								authUser=new Usuario(registroUsuario);
+								authUser.setToken(registro.getCampos().get("token").toString());
+								login.setVisible(false);
+								viewDashBoard.getDashboard().setVisible(true);
+								viewDashBoard.setAuthUser(authUser);					
+								testoMensaje.setText("Las credenciales del usuario son correctas.");						
+							}else {	
+								hBoxCuerpo.setVisible(false);
+								testoMensaje.setText("Intente nuevamente ingresar las credenciales.");						
+							}
+						}else {
+							hBoxCuerpo.setVisible(false);
+							testoMensaje.setText("Intente nuevamente ingresar las credenciales.");
 						}
 						desaparecerDialogo(3000);
 					}
