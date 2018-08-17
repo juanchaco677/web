@@ -17,7 +17,7 @@
                <children>
                   <VBox prefHeight="266.0" prefWidth="300.0" styleClass="sidebar">
                      <children>
-                        <Label prefHeight="290.0" prefWidth="300.0" style="-fx-background-color: #00A2D3;" text="Concejal" textAlignment="CENTER" textFill="WHITE" VBox.vgrow="ALWAYS">
+                        <Label fx:id="nombreUsuario" prefHeight="290.0" prefWidth="300.0" style="-fx-background-color: #00A2D3;" text="Concejal" textAlignment="CENTER" textFill="WHITE" VBox.vgrow="ALWAYS">
                            <font>
                               <Font size="19.0" />
                            </font>
@@ -32,7 +32,7 @@
                                     <Image url="@../imagenes/icons8-file-64.png" />
                                  </image>
                               </ImageView>
-                              <Label prefHeight="59.0" prefWidth="174.0" text="Registraduria" textFill="#c9c1c1" />
+                              <Label fx:id="registraduria" prefHeight="59.0" prefWidth="174.0" text="Registraduria" textFill="#c9c1c1" />
                            </children>
                            <opaqueInsets>
                               <Insets />
@@ -41,14 +41,14 @@
                               <Insets bottom="20.0" />
                            </padding>
                         </HBox>
-                        <HBox fx:id="persona" alignment="CENTER_LEFT" prefHeight="58.0" prefWidth="200.0" styleClass="btns">
+                        <HBox fx:id="masivo" alignment="CENTER_LEFT" prefHeight="58.0" prefWidth="200.0" styleClass="btns">
                            <children>
                               <ImageView fitHeight="45.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
                                     <Image url="@../imagenes/icons8-contacts-64.png" />
                                  </image>
                               </ImageView>
-                              <Label prefHeight="50.0" prefWidth="184.0" text="Persona" textFill="#c9c1c1" />
+                              <Label prefHeight="50.0" prefWidth="184.0" text="Masivo Persona" textFill="#c9c1c1" />
                            </children>
                            <padding>
                               <Insets bottom="20.0" />
@@ -92,54 +92,52 @@
                   </VBox>
                   <HBox fx:id="container" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="400.0" prefWidth="1000.0" styleClass="parent">
                      <children>
-                        <WebView fx:id="web" prefHeight="400.0" prefWidth="801.0" />
-                        <VBox alignment="CENTER" prefHeight="800.0" prefWidth="197.0">
+                        <HBox fx:id="registraduriaContainer" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="400.0" prefWidth="1000.0" styleClass="parent">
                            <children>
-                              <JFXTextField fx:id="nombreCompleto" prefHeight="37.0" prefWidth="197.0" promptText="Nombre Completo">
-                                 <VBox.margin>
-                                    <Insets bottom="15.0" />
-                                 </VBox.margin>
-                              </JFXTextField>
-                              <JFXTextField fx:id="celular" prefHeight="37.0" prefWidth="197.0" promptText="Celular">
-                                 <VBox.margin>
-                                    <Insets bottom="15.0" />
-                                 </VBox.margin>
-                              </JFXTextField>
-                              <JFXButton fx:id="btnGRegistraduriaIndividual" prefHeight="43.0" prefWidth="197.0" style="-fx-background-color: #3f51b5;" text="Guardar" textFill="WHITE">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </JFXButton>
+                              <WebView fx:id="web" prefHeight="400.0" prefWidth="801.0" />
+                              <VBox alignment="CENTER" prefHeight="800.0" prefWidth="197.0">
+                                 <children>
+                                    <VBox fx:id="formRegistraduria" alignment="CENTER" prefHeight="194.0" prefWidth="197.0">
+                                       <children>
+                                          <JFXTextField fx:id="nombreCompleto" prefHeight="37.0" prefWidth="197.0" promptText="Nombre Completo">
+                                             <VBox.margin>
+                                                <Insets bottom="15.0" />
+                                             </VBox.margin>
+                                          </JFXTextField>
+                                          <JFXTextField fx:id="celular" prefHeight="37.0" prefWidth="197.0" promptText="Celular">
+                                             <VBox.margin>
+                                                <Insets bottom="15.0" />
+                                             </VBox.margin>
+                                          </JFXTextField>
+                                          <JFXButton fx:id="btnGRegistraduriaIndividual" prefHeight="43.0" prefWidth="197.0" style="-fx-background-color: #3f51b5;" text="Guardar" textFill="WHITE">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </JFXButton>
+                                       </children>
+                                    </VBox>
+                                    <VBox fx:id="formMasivo" prefHeight="52.0" prefWidth="197.0" visible="false">
+                                       <children>
+                                          <JFXButton fx:id="btnIniciarMasivo" prefHeight="43.0" prefWidth="197.0" style="-fx-background-color: #3f51b5;" text="Iniciar Proceso" textFill="WHITE">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </JFXButton>
+                                          <JFXButton fx:id="btnPararMasivo" prefHeight="43.0" prefWidth="197.0" style="-fx-background-color: #3f51b5;" text="Parar Proceso" textFill="WHITE">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </JFXButton>
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </VBox>
                            </children>
-                        </VBox>
+                        </HBox>
                      </children>
                   </HBox>
                </children>
             </HBox>
-            <HBox fx:id="cuerpo" alignment="CENTER" opacity="0.11" prefHeight="810.0" prefWidth="1310.0" style="-fx-background-color: #000;" visible="false">
-               <children>
-                  <JFXSpinner style="-fx-scale-x: 2; -fx-scale-y: 2; -fx-scale-z: 2;" />
-               </children>
-            </HBox>
-            <Pane fx:id="dialogo" prefHeight="113.0" prefWidth="228.0" style="-fx-background-color: #dfe6e9; -fx-background-radius: 5;" visible="false">
-               <children>
-                  <ImageView fitHeight="58.0" fitWidth="73.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../imagenes/alert_icon-icons.com_66469.png" />
-                     </image>
-                  </ImageView>
-                  <Label alignment="CENTER" contentDisplay="CENTER" layoutX="60.0" layoutY="4.0" prefHeight="40.0" prefWidth="164.0" text="Información" underline="true" wrapText="true">
-                     <font>
-                        <Font name="Bauhaus 93" size="20.0" />
-                     </font>
-                  </Label>
-                  <Label layoutX="6.0" layoutY="57.0" prefHeight="52.0" prefWidth="218.0" text="Mensaje">
-                     <font>
-                        <Font name="Bauhaus 93" size="12.0" />
-                     </font>
-                  </Label>
-               </children>
-            </Pane>
          </children>
       </Pane>
       <VBox fx:id="login" alignment="CENTER" layoutX="-2.0" layoutY="1.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="810.0" prefWidth="1304.0">
@@ -161,5 +159,29 @@
             </JFXButton>
          </children>
       </VBox>
+      <HBox fx:id="cuerpo" alignment="CENTER" opacity="0.11" prefHeight="810.0" prefWidth="1310.0" style="-fx-background-color: #000;" visible="false">
+         <children>
+            <JFXSpinner style="-fx-scale-x: 2; -fx-scale-y: 2; -fx-scale-z: 2;" />
+         </children>
+      </HBox>
+      <Pane fx:id="dialogo" prefHeight="113.0" prefWidth="228.0" style="-fx-background-color: #dfe6e9; -fx-background-radius: 5;" visible="false">
+         <children>
+            <ImageView fx:id="imagenMensaje" fitHeight="58.0" fitWidth="73.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../imagenes/alert_icon-icons.com_66469.png" />
+               </image>
+            </ImageView>
+            <Label fx:id="tituloMensaje" alignment="CENTER" contentDisplay="CENTER" layoutX="60.0" layoutY="4.0" prefHeight="40.0" prefWidth="164.0" text="InformaciÃ³n" underline="true" wrapText="true">
+               <font>
+                  <Font name="Bauhaus 93" size="20.0" />
+               </font>
+            </Label>
+            <Label fx:id="testoMensaje" layoutX="6.0" layoutY="57.0" prefHeight="52.0" prefWidth="218.0" text="Mensaje">
+               <font>
+                  <Font name="Bauhaus 93" size="12.0" />
+               </font>
+            </Label>
+         </children>
+      </Pane>
    </children>
 </Pane>

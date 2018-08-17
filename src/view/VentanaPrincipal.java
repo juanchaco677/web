@@ -62,8 +62,8 @@ public class VentanaPrincipal extends Application  {
 		testoMensaje=(Label)root.lookup("#testoMensaje");
 		hBoxCuerpo=(HBox)root.lookup("#cuerpo");
 		viewDashBoard=new ViewDashBoard(root,dialogo,testoMensaje,hBoxCuerpo);
-		hilo=new Thread(viewDashBoard);
-		hilo.start();
+//		hilo=new Thread(viewDashBoard);
+//		hilo.start();
 		viewLogin=new ViewLogin(root,viewDashBoard,dialogo,testoMensaje,hBoxCuerpo);
 
 

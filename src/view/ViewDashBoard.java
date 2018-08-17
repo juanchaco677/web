@@ -103,7 +103,9 @@ public class ViewDashBoard extends Pane implements Runnable{
 
 			@Override
 			public void handle(Event arg0) {
+				webView.getEngine().executeScript("document.forms['form'].submit()");
 				hBoxCuerpo.setVisible(true);
+				
 				registro=capturarDatosRegistraduria("");
 				if(registro !=null && registro.getCampos() !=null){
 
@@ -125,7 +127,8 @@ public class ViewDashBoard extends Pane implements Runnable{
 
 			@Override
 			public void handle(Event arg0) {
-				masivoAutomatico=true;
+				tareaProgramadaMasivo();
+//				masivoAutomatico=true;
 			}
 
 		});
@@ -133,7 +136,7 @@ public class ViewDashBoard extends Pane implements Runnable{
 
 			@Override
 			public void handle(Event arg0) {
-				masivoAutomatico=false;
+//				masivoAutomatico=false;
 			}
 
 		});
@@ -154,6 +157,7 @@ public class ViewDashBoard extends Pane implements Runnable{
 			public void handle(Event arg0) {				
 				formRegistraduria.setVisible(false);
 				formMasivo.setVisible(true);
+				//@
 			}
 		});
 	}
@@ -207,6 +211,7 @@ public class ViewDashBoard extends Pane implements Runnable{
 		Registro registro=new Registro();
 		Document document=webView.getEngine().getDocument();
 		if(document.getElementsByTagName("td").getLength()>0){
+	
 			registro.getCampos().put("cedula","".equals(cedula)?document.getElementsByTagName("td").item(0).getTextContent():cedula);
 			registro.getCampos().put("departamento",document.getElementsByTagName("td").item(1).getTextContent());
 			registro.getCampos().put("ciudad",document.getElementsByTagName("td").item(2).getTextContent());
@@ -234,13 +239,13 @@ public class ViewDashBoard extends Pane implements Runnable{
 					Registro registroAux=Request.getGoogle("https://maps.googleapis.com/maps/api/geocode/json", parametros);
 					if(registroAux !=null && "OK".equals(registroAux.getCampos().get("status").toString())){						
 						String cadena=registroAux.getCampos().get("results").toString();
-						String resultado=encontrarCadena(cadena,"\"formatted_address\": \"","\"geometry\":");
-						registro.getCampos().put("direccion",resultado.replace("\",","").trim());
-						resultado=encontrarCadena(cadena,"\"lat\":","\"lng\":");
-						registro.getCampos().put("latitud",resultado.replace(",","").trim());
-						resultado=encontrarCadena(cadena,"\"lng\":","\"southwest\"");
-						registro.getCampos().put("longitud",resultado.replace("},", "").trim());
-
+						String resultado=encontrarCadena(cadena,"\"formatted_address\": \"","\"types\":").replace(":","");
+						registro.getCampos().put("direccion",resultado.replace("\",","").replace("\"","").replace("}","").trim());
+						resultado=encontrarCadena(cadena,"\"lng\":","\"lat\":");
+						registro.getCampos().put("longitud",resultado.replace(",","").trim());
+						resultado=encontrarCadena(cadena,"\"lat\":","\"northeast\"");						
+						registro.getCampos().put("latitud",resultado.replace("},", "").trim());
+						return registro;
 					}
 				} catch (URISyntaxException e) {
 					// TODO Auto-generated catch block
@@ -343,31 +348,34 @@ public class ViewDashBoard extends Pane implements Runnable{
 		// TODO Auto-generated method stub
 		UsuarioService usuarioService=new UsuarioService();
 		try {
+			System.out.println(authUser.getType());
+			System.out.println("metodo tareprogramada"+authUser.getType());
 			int idCandidato="S".equals(authUser.getType())?authUser.getId():authUser.getCandidato().getId();
 			List<Registro> listaUsuario=usuarioService.consultaMasivoPersona(10, authUser.getToken(),idCandidato);
-			hBoxCuerpo.setVisible(true);
+//			hBoxCuerpo.setVisible(true);
 			for (Registro registroUsuario : listaUsuario) {
-				webView.getEngine().executeScript("document.getElementById(\"nuip\").value='"+registroUsuario.getCampos().get("nit").toString()+"';");
-				webView.getEngine().executeScript("document.forms['form'].submit()");
-				try {
-					Thread.sleep(600);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				registro=capturarDatosRegistraduria(registroUsuario.getCampos().get("nit").toString());
-				Departamento departamento=new Departamento(registro.getCampos().get("departamento").toString());
-				Ciudad ciudad=new Ciudad(registro.getCampos().get("ciudad").toString(),departamento);
-				Localizacion localizacion=new Localizacion(new Double(registro.getCampos().get("latitud").toString()),new Double(registro.getCampos().get("longitud").toString()), registro.getCampos().get("direccion").toString(), ciudad);
-				PuntoVotacion punto =new PuntoVotacion(registro.getCampos().get("puesto").toString(), localizacion);
-				Mesa mesa=new Mesa(Integer.parseInt(registro.getCampos().get("mesa").toString()), punto);
-				Usuario usuario=new Usuario(nombreCompleto.getText(), celular.getText(), mesa);
-				Usuario referido=new Usuario(Integer.parseInt(registroUsuario.getCampos().get("id_referido").toString()));
-				Usuario candidato=new Usuario(Integer.parseInt(registroUsuario.getCampos().get("id_candidato").toString()));
-				usuario.setReferido(referido);
-				usuario.setCandidato(candidato);
-				usuario.setCedula(registro.getCampos().get("cedula").toString());
-				enviarDatosRegistraduria(usuario,0);
+				
+//				webView.getEngine().executeScript("document.getElementById(\"nuip\").value='"+registroUsuario.getCampos().get("nit").toString()+"';");
+//				webView.getEngine().executeScript("document.forms['form'].submit()");
+//				try {
+//					Thread.sleep(600);
+//				} catch (InterruptedException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+//				registro=capturarDatosRegistraduria(registroUsuario.getCampos().get("nit").toString());
+//				Departamento departamento=new Departamento(registro.getCampos().get("departamento").toString());
+//				Ciudad ciudad=new Ciudad(registro.getCampos().get("ciudad").toString(),departamento);
+//				Localizacion localizacion=new Localizacion(new Double(registro.getCampos().get("latitud").toString()),new Double(registro.getCampos().get("longitud").toString()), registro.getCampos().get("direccion").toString(), ciudad);
+//				PuntoVotacion punto =new PuntoVotacion(registro.getCampos().get("puesto").toString(), localizacion);
+//				Mesa mesa=new Mesa(Integer.parseInt(registro.getCampos().get("mesa").toString()), punto);
+//				Usuario usuario=new Usuario(nombreCompleto.getText(), celular.getText(), mesa);
+//				Usuario referido=new Usuario(Integer.parseInt(registroUsuario.getCampos().get("id_referido").toString()));
+//				Usuario candidato=authUser.getCandidato();
+//				usuario.setReferido(referido);
+//				usuario.setCandidato(candidato);
+//				usuario.setCedula(registro.getCampos().get("cedula").toString());
+//				enviarDatosRegistraduria(usuario,0);
 
 			}
 
@@ -382,18 +390,18 @@ public class ViewDashBoard extends Pane implements Runnable{
 	public void run() {
 		// TODO Auto-generated method stub
 
-		while(true) {
-			if(masivoAutomatico) {
-
-				try {
-					tareaProgramadaMasivo();
-					Thread.sleep(400);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		}
+//		while(true) {
+//			if(masivoAutomatico) {
+//
+//				try {
+//					tareaProgramadaMasivo();
+//					Thread.sleep(400);
+//				} catch (InterruptedException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+//			}
+//		}
 
 	}
 

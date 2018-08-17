@@ -142,12 +142,12 @@
       </Pane>
       <VBox fx:id="login" alignment="CENTER" layoutX="-2.0" layoutY="1.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="810.0" prefWidth="1304.0">
          <children>
-            <JFXTextField fx:id="correo" prefHeight="35.0" prefWidth="600.0" promptText="Correo ElectrÃ³nico">
+            <JFXTextField fx:id="correo" prefHeight="35.0" prefWidth="600.0" promptText="Correo Electrónico">
                <VBox.margin>
                   <Insets bottom="15.0" left="500.0" right="500.0" />
                </VBox.margin>
             </JFXTextField>
-            <JFXPasswordField fx:id="contrasena" prefHeight="35.0" prefWidth="600.0" promptText="ContraseÃ±a">
+            <JFXPasswordField fx:id="contrasena" prefHeight="35.0" prefWidth="600.0" promptText="Contraseña">
                <VBox.margin>
                   <Insets bottom="15.0" left="500.0" right="500.0" />
                </VBox.margin>

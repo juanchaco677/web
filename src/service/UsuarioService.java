@@ -70,6 +70,7 @@ public class UsuarioService {
 	}
 	
 	public List<Registro> consultaMasivoPersona(int cantidad, String token,int idCandidato) throws URISyntaxException   {
+		System.out.println("entro");
 		Map<String,Object>parametros=new HashMap<>();				
 		parametros.put("cantidad",cantidad);
 		parametros.put("token",token);
