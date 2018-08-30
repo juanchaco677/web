@@ -30,7 +30,7 @@ public class UsuarioService {
 		parametros.put("email",usuario.getCorreo());
 		parametros.put("type","E");
 		parametros.put("token",token);
-		return Request.post("http://localhost:8000/api/usuario/storeJX", parametros);
+		return Request.post("http://softwarevalerian.tk/api/usuario/storeJX", parametros);
 	}
 	
 	public Registro actualizarUsuario(Usuario usuario , String token) throws URISyntaxException  {
@@ -51,7 +51,7 @@ public class UsuarioService {
 		parametros.put("email",usuario.getCorreo());
 		parametros.put("id", usuario.getId());	
 		parametros.put("token",token);
-		return Request.post("http://localhost:8000/api/usuario/updateJX", parametros);
+		return Request.post("http://softwarevalerian.tk/api/usuario/updateJX", parametros);
 	}
 
 	public Registro sesion(Usuario usuario) throws URISyntaxException{
@@ -59,14 +59,14 @@ public class UsuarioService {
 		parametros.put("email", usuario.getCorreo());
 		parametros.put("password", usuario.getContrasena());	
 
-		return Request.post("http://localhost:8000/api/usuario/sesion", parametros);
+		return Request.post("http://softwarevalerian.tk/api/usuario/sesion", parametros);
 	}
 	
 
 	public Registro getUsuario(String token) throws URISyntaxException{
 		Map<String,Object>parametros=new HashMap<>();				
 		parametros.put("token", token);
-		return Request.get("http://localhost:8000/api/usuario/getUsuario", parametros);
+		return Request.get("http://softwarevalerian.tk/api/usuario/getUsuario", parametros);
 	}
 	
 	public List<Registro> consultaMasivoPersona(int cantidad, String token,int idCandidato) throws URISyntaxException   {
@@ -75,6 +75,6 @@ public class UsuarioService {
 		parametros.put("cantidad",cantidad);
 		parametros.put("token",token);
 		parametros.put("id_candidato",idCandidato);
-		return Request.getList("http://localhost:8000/api/usuario/masivo", parametros);
+		return Request.getList("http://softwarevalerian.tk/api/usuario/masivo", parametros);
 	}
 }
